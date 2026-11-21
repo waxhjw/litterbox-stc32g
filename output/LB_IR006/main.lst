@@ -1,0 +1,204 @@
+C251 COMPILER V5.60.0,  array_main                                                         11/11/26  09:49:03  PAGE 1   
+
+
+C251 COMPILER V5.60.0, COMPILATION OF MODULE array_main
+OBJECT MODULE PLACED IN main.obj
+COMPILER INVOKED BY: D:\projects\litterbox-stc32g\.tools\keil-c251\C251\BIN\C251.EXE D:\projects\litterbox-stc32g\diagno
+                    -stics\IR006\array_main.c SMALL MODSRC INCDIR(D:\projects\litterbox-stc32g\diagnostics\IR006) OBJECT(main.obj) PRINT(main
+                    -.lst) OPTIMIZE(9,SIZE) ROM(SMALL) 
+
+stmt  level    source
+
+*** WARNING C500 IN LINE 1 OF D:\projects\litterbox-stc32g\diagnostics\IR006\array_main.c: MISSING SERIAL NUMBER IN 'TOO
+             -LS.INI'
+    1          /* IR006独立三路采样诊断：保留三键3秒启停/串口停止/看门狗/2.4V复位。
+    2           * 暂不接入未标定的三路遮挡判据，原单路CN4/CN8联动仅在IR005中保留。
+    3           * 本诊断不是新的完整功能基线；临时换用前须按项目规则确认此范围。
+    4           * A/B/C给三路分别输出低电平探测，D/E/F给三路分别输出高电平探测，
+    5           * 每次最多5ms，随后释放高阻；高/低均不直接等同光学发射开启/关闭。
+    6           */
+    7          #include "motor_control.h"
+    8          #include "motor_ir_guard.h"
+    9          #include "array_probe_state.h"
+   10          sfr P0=0x80; sfr P0M0=0x94; sfr P0M1=0x93;
+   11          sfr P1=0x90; sfr P1M0=0x92; sfr P1M1=0x91;
+   12          sfr P2=0xA0; sfr P2M0=0x96; sfr P2M1=0x95;
+   13          sfr P3=0xB0; sfr P3M0=0xB2; sfr P3M1=0xB1;
+   14          sfr P5=0xC8; sfr P5M0=0xCA; sfr P5M1=0xC9;
+   15          sfr P_SW1=0xA2; sfr P_SW2=0xBA;
+   16          sfr IE=0xA8; sfr AUXR=0x8E; sfr TMOD=0x89; sfr TCON=0x88;
+   17          sfr TL0=0x8A; sfr TH0=0x8C; sfr TL1=0x8B; sfr TH1=0x8D;
+   18          sfr SCON=0x98; sfr SBUF=0x99; sfr WDT_CONTR=0xC1; sfr RSTCFG=0xFF;
+   19          sfr ADC_CONTR=0xBC; sfr ADC_RES=0xBD; sfr ADC_RESL=0xBE; sfr ADCCFG=0xDE;
+   20          sbit MOTOR_BI=P2^0; sbit MOTOR_FI=P2^2;
+   21          sbit KEY1=P2^6; sbit KEY2=P0^2; sbit KEY3=P2^7;
+   22          sbit ARRAY_TX1=P0^4; sbit ARRAY_TX2=P5^2; sbit ARRAY_TX3=P5^3;
+   23          sbit TR0=TCON^4; sbit TF0=TCON^5; sbit TR1=TCON^6;
+   24          sbit RI=SCON^0; sbit TI=SCON^1;
+   25          #define XREG(addr) (*(unsigned char volatile far *)(addr))
+   26          #define ADCTIM XREG(0x7EFEA8UL)
+   27          #define FOSC 11059200UL
+   28          #define T0_RELOAD (65536UL-(FOSC+5000UL)/10000UL)
+   29          #define UART_RELOAD (65536UL-FOSC/115200UL/4UL)
+   30          volatile MotorControl control;
+   31          volatile MotorIrGuard guard;
+   32          volatile ArrayProbe probe;
+   33          volatile unsigned char heartbeat;
+   34          unsigned char divider;
+   35          
+   36          void array_release(void)
+   37          {
+   38   1          /* 只释放三个控制脚，不改按键P0.2和其它GPIO；高阻不是光学关闭证明。 */
+   39   1          P0M1|=0x10; P0M0&=0xEF;
+   40   1          P5M1|=0x0C; P5M0&=0xF3;
+   41   1      }
+   42          unsigned char pressed_keys(void)
+   43          {
+   44   1          unsigned char keys=0;
+   45   1          if (KEY1==0) keys|=1;
+   46   1          if (KEY2==0) keys|=2;
+   47   1          if (KEY3==0) keys|=4;
+   48   1          return keys;
+   49   1      }
+   50          void timer0_isr(void) interrupt 1
+   51          {
+   52   1          heartbeat++;
+   53   1          if (array_probe_tick(&probe)) array_release();
+   54   1          if (++divider==100) {
+   55   2              divider=0;
+C251 COMPILER V5.60.0,  array_main                                                         11/11/26  09:49:03  PAGE 2   
+
+   56   2              motor_control_tick(&control,pressed_keys());
+   57   2              /* 采样阶段无有效光路判定；保持未接模块也能独立测试电机的约定。 */
+   58   2              motor_ir_guard_tick(&guard,control.running,IR_UNKNOWN);
+   59   2              MOTOR_BI=0; MOTOR_FI=guard.actual;
+   60   2              if (control.running && probe.active) { array_probe_cancel(&probe); array_release(); }
+   61   2          }
+   62   1      }
+   63          void uart_char(unsigned char c)
+   64          {
+   65   1          TI=0; SBUF=c;
+   66   1          while (TI==0) { } /* 期间中断继续限时释放探测，主循环异常由看门狗恢复。 */
+   67   1      }
+   68          void uart_text(const char far *p) { while (*p) uart_char(*p++); }
+   69          void hex_digit(unsigned char n) { n&=15; uart_char(n<10 ? n+'0' : n-10+'A'); }
+   70          void hex_word(unsigned int n)
+   71          {
+   72   1          hex_digit((unsigned char)(n>>12)); hex_digit((unsigned char)(n>>8));
+   73   1          hex_digit((unsigned char)(n>>4)); hex_digit((unsigned char)n);
+   74   1      }
+   75          void status(void)
+   76          {
+   77   1          uart_text("IR006 "); uart_text(guard.actual ? "RUN KEYS=" : "STOP KEYS=");
+   78   1          uart_char(KEY1 ? '1':'0'); uart_char(KEY2 ? '1':'0'); uart_char(KEY3 ? '1':'0');
+   79   1          uart_text(" PROBE="); hex_digit(probe.active);
+   80   1          uart_text(" RST="); hex_word(RSTCFG);
+   81   1          uart_text(" REQ="); hex_digit(control.running);
+   82   1          uart_text(" ARRAY=SAMPLE\r\n"); /* 明示采样阶段，不能当作遮挡保护已经启用。 */
+   83   1      }
+   84          unsigned int adc_read(unsigned char channel)
+   85          {
+   86   1          unsigned int timeout=2000;
+   87   1          ADC_CONTR=0xC0|channel; /* 开电源、选通道、清旧FLAG并启动。 */
+   88   1          while ((ADC_CONTR&0x20)==0) {
+   89   2              if (--timeout==0) { ADC_CONTR=0; return 0xFFFF; }
+   90   2          }
+   91   1          ADC_CONTR&=0xDF;
+   92   1          return ((unsigned int)ADC_RES<<8)|ADC_RESL;
+   93   1      }
+   94          void report_array(void)
+   95          {
+   96   1          unsigned int raw[3];
+   97   1          unsigned char i, live=probe.active;
+   98   1          /* 切换通道后丢弃首个转换；全部采完再串口输出，避免UART耗时错过探测窗�
+             -�� */
+   99   1          for (i=0;i<3;i++) {
+  100   2              unsigned char channel=i ? i-1 : 14;
+  101   2              if (adc_read(channel)==0xFFFF) raw[i]=0xFFFF;
+  102   2              else raw[i]=adc_read(channel);
+  103   2          }
+  104   1          live=(live!=0 && live==probe.active) ? 1:0;
+  105   1          uart_text("IR006 ADC=");
+  106   1          for (i=0;i<3;i++) { hex_word(raw[i]); uart_char(i==2 ? '\r':','); }
+  107   1          uart_text("\nLIVE="); hex_digit(live); uart_text("\r\n");
+  108   1      }
+  109          void probe_command(unsigned char command_id)
+  110          {
+  111   1          unsigned char high;
+  112   1          IE=0;
+  113   1          if (array_probe_begin(&probe,command_id,control.running)==0) {
+  114   2              IE=0x82; uart_text("IR006 REJECT\r\n"); return;
+  115   2          }
+  116   1          array_release(); high=command_id>3 ? 1:0; if (high) command_id-=3;
+  117   1          /* 先设单个脚锁存值，再开启该脚推挽；不会读取按键低电平后误锁住P0.2。 
+             -*/
+  118   1          if (command_id==1) { ARRAY_TX1=high; P0M1&=0xEF; P0M0|=0x10; }
+  119   1          else if (command_id==2) { ARRAY_TX2=high; P5M1&=0xFB; P5M0|=0x04; }
+C251 COMPILER V5.60.0,  array_main                                                         11/11/26  09:49:03  PAGE 3   
+
+  120   1          else { ARRAY_TX3=high; P5M1&=0xF7; P5M0|=0x08; }
+  121   1          IE=0x82;
+  122   1          report_array();
+  123   1      }
+  124          void handle_command(unsigned char value)
+  125          {
+  126   1          if (value=='!' || value=='0') {
+  127   2              IE=0; motor_control_stop(&control); guard.actual=0; MOTOR_BI=0; MOTOR_FI=0;
+  128   2              array_probe_cancel(&probe); array_release(); IE=0x82; status();
+  129   2          } else if (value=='?') status();
+  130   1          else if (value=='a') report_array();
+  131   1          else if (value>='A' && value<='F') probe_command((unsigned char)(value-'A'+1));
+  132   1      }
+  133          void main(void)
+  134          {
+  135   1          unsigned char value,last_heartbeat=0,previous_run=0;
+  136   1          IE=0; MOTOR_BI=0; MOTOR_FI=0;
+  137   1          P2M1&=0xFA; P2M0|=0x05;
+  138   1          RSTCFG=(RSTCFG&0xBC)|0x41; P_SW2|=0x80;
+  139   1          array_release();
+  140   1          P0M0&=0xBB; P0M1=(P0M1&0xFB)|0x40; /* P0.6高阻ADC14，P0.2原按键准双向。 */
+  141   1          P1M0=(P1M0&0xFC)|0x80; P1M1=(P1M1&0x7F)|0x03; /* ADC0/1输入，旧Q10控制脚保持低。 */
+  142   1          P1&=0x7F; XREG(0x7EFEB1UL)=0; XREG(0x7EFEC0UL)=0;
+  143   1          P0|=0x04; P2|=0xC0; P2M0&=0x3F; P2M1&=0x3F;
+  144   1          P_SW1&=0x3F; P3|=0x03; P3M0=(P3M0&0xFC)|0x02; P3M1=(P3M1&0xFC)|0x01;
+  145   1          ADCTIM=0x3F; ADCCFG=0x2F; ADC_CONTR=0x80;
+  146   1          motor_control_init(&control); motor_ir_guard_init(&guard); array_probe_init(&probe);
+  147   1          heartbeat=0; divider=0;
+  148   1          TR0=0; TR1=0; TMOD=0; AUXR=(AUXR|0xC0)&0xFE;
+  149   1          TH0=(unsigned char)(T0_RELOAD>>8); TL0=(unsigned char)T0_RELOAD;
+  150   1          TH1=(unsigned char)(UART_RELOAD>>8); TL1=(unsigned char)UART_RELOAD;
+  151   1          SCON=0x50; TF0=0; TR1=1; TR0=1; IE=0x82; WDT_CONTR=0x33;
+  152   1          uart_text("BOOT\r\n"); status();
+  153   1          for (;;) {
+  154   2              if (last_heartbeat!=heartbeat) { last_heartbeat=heartbeat; WDT_CONTR=0x33; }
+  155   2              if (previous_run!=guard.actual) { previous_run=guard.actual; status(); }
+  156   2              if (RI) {
+  157   3                  value=SBUF; RI=0;
+  158   3                  handle_command(value);
+  159   3              }
+  160   2          }
+  161   1      }
+
+
+Module Information          Static   Overlayable
+------------------------------------------------
+  code size            =      1461     ------
+  ecode size           =    ------     ------
+  data size            =        19          6
+  idata size           =    ------     ------
+  pdata size           =    ------     ------
+  xdata size           =    ------     ------
+  xdata-const size     =    ------     ------
+  edata size           =    ------     ------
+  bit size             =    ------     ------
+  ebit size            =    ------     ------
+  bitaddressable size  =    ------     ------
+  ebitaddressable size =    ------     ------
+  far data size        =    ------     ------
+  huge data size       =    ------     ------
+  const size           =    ------     ------
+  hconst size          =       107     ------
+End of Module Information.
+
+
+C251 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

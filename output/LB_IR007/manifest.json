@@ -1,0 +1,29 @@
+{
+  "bytes": 1617,
+  "start": "0xff0000",
+  "end": "0xff0658",
+  "sha256": "b04e655e9e8ff0d2814ff1dc222cdfd3ffd27d098f31c9179a8a5001960897bb",
+  "version": "LB_IR007",
+  "kind": "diagnostic",
+  "model": "STC32G8K64",
+  "source_sha256": "3e271d907aad63af1c8e42cd0f7bbfc26047928235d57dc50be839ea560a4341",
+  "tool_sha256": "07b4a72f88d20964b7a36bacac758de8c035cf3654c46e4c69c35590b94ad0d9",
+  "hardware_tested": false,
+  "purpose": "serial ISP download test only",
+  "original_functions_inherited": false,
+  "rollback_firmware_available": false,
+  "compiler_license": "official C251 evaluation 2KB",
+  "compiler_options": [
+    "OPTIMIZE(9,SIZE)",
+    "ROM(SMALL)"
+  ],
+  "trim_khz": 11059.2,
+  "extra_sources": {
+    "motor_control.h": "ea5ec5df02f34c5ef8ba37d532c1a3581c220c98dc89ee81cb5a940b1cc5f11b",
+    "ir_control.h": "23ec2d27200b0b5623f45bee394c39cb71c80f620c09cca7fe74679d791ae4ea",
+    "motor_ir_guard.h": "6dfc5b342674428318c4bbeb8b142e7e829d5c49ee8015a1d679a8259a77e073",
+    "array_probe_state.h": "047a7d660da397d55b2018da13379af2c20afa4dc5c67f173ad97ada24538186"
+  },
+  "diagnostic_scope": "array raw ADC and bounded pin probes; old single IR link temporarily inactive; motor key and stop retained",
+  "purpose_detail": "IR006 sampling plus internal 4k pull-ups on P0.6/P1.0/P1.1; probing suspected open-collector receivers; no IR stop decisions"
+}

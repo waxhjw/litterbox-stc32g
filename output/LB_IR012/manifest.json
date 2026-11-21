@@ -1,0 +1,29 @@
+{
+  "bytes": 2036,
+  "start": "0xff0000",
+  "end": "0xff07fb",
+  "sha256": "0c1b690c42b7e929f148d58e79ea5aa6fcbad0b60fa2397a777595540a3dfcc7",
+  "version": "LB_IR012",
+  "kind": "diagnostic",
+  "model": "STC32G8K64",
+  "source_sha256": "8f1a720c42a4a85a92e4f786e9f937024922cd422bbd4b1824ac84f96d9bfc68",
+  "tool_sha256": "70086b45c2066d9250ae77fc3924ae3be3a3ce932c1085ea5fad9e000fc0df0c",
+  "hardware_tested": false,
+  "purpose": "serial ISP download test only",
+  "original_functions_inherited": false,
+  "rollback_firmware_available": false,
+  "compiler_license": "official C251 evaluation 2KB",
+  "compiler_options": [
+    "OPTIMIZE(9,SIZE)",
+    "ROM(SMALL)"
+  ],
+  "trim_khz": 11059.2,
+  "extra_sources": {
+    "motor_control.h": "ea5ec5df02f34c5ef8ba37d532c1a3581c220c98dc89ee81cb5a940b1cc5f11b",
+    "motor_ir_guard.h": "6dfc5b342674428318c4bbeb8b142e7e829d5c49ee8015a1d679a8259a77e073",
+    "ir_carrier_state.h": "e4aa8798f3d7a5b5bcb307d43bb64ee9ea183c5d398c031c7d31c31855d3e33a",
+    "ir_beam_state.h": "250cbb474c2e89daf46868e14c7592c3185fc43fe91422d3032290c39ee4041b"
+  },
+  "diagnostic_scope": "array raw ADC and bounded pin probes; old single IR link temporarily inactive; motor key and stop retained",
+  "purpose_detail": "IR011 plus cross-window contamination guard: sampling rounds cut 4->2 and start gate 45->55 ticks so a batch fits inside the 1ms burst; window sequence number gen aborts a batch the moment the window flips, so leftover rounds never land in the next window peak; close() snapshots peak into last[] and the report prints the snapshot instead of the live accumulator"
+}

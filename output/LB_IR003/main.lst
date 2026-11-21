@@ -1,0 +1,251 @@
+C251 COMPILER V5.60.0,  main                                                               10/11/26  16:14:36  PAGE 1   
+
+
+C251 COMPILER V5.60.0, COMPILATION OF MODULE main
+OBJECT MODULE PLACED IN main.obj
+COMPILER INVOKED BY: D:\projects\litterbox-stc32g\.tools\keil-c251\C251\BIN\C251.EXE D:\projects\litterbox-stc32g\diagno
+                    -stics\IR003\main.c SMALL MODSRC INCDIR(D:\projects\litterbox-stc32g\diagnostics\IR003) OBJECT(main.obj) PRINT(main.lst) 
+                    -OPTIMIZE(9,SIZE) 
+
+stmt  level    source
+
+*** WARNING C500 IN LINE 1 OF D:\projects\litterbox-stc32g\diagnostics\IR003\main.c: MISSING SERIAL NUMBER IN 'TOOLS.INI
+             -'
+    1          /*
+    2           * IR003：在冻结IR002/MOTOR003基础上增加对射遮挡停机与10秒恢复。
+    3           * 保留三键长按3秒启停、释放再触发、串口只停机和看门狗。
+    4           * 生产CAM：CN4.OUT -> MCU8/P1.4，MCU11/P1.7 -> R42 -> Q10 -> CN8.T-。
+    5           * 新BOM：Q10=SI2302系列、R41=10R；默认关闭，只发1ms/10ms短脉冲包。
+    6           * 接收芯片型号不明，不假设NEC协议，不表示猫检测或安全状态。
+    7           */
+    8          #include "motor_control.h"
+    9          #include "ir_control.h"
+   10          #include "motor_ir_guard.h"
+   11          sfr P0=0x80;
+   12          sfr P0M0=0x94;
+   13          sfr P0M1=0x93;
+   14          sfr P1=0x90;
+   15          sfr P1M0=0x92;
+   16          sfr P1M1=0x91;
+   17          sfr P2=0xA0;
+   18          sfr P2M0=0x96;
+   19          sfr P2M1=0x95;
+   20          sfr P3=0xB0;
+   21          sfr P3M0=0xB2;
+   22          sfr P3M1=0xB1;
+   23          sfr P_SW1=0xA2;
+   24          sfr P_SW2=0xBA;
+   25          sfr IE=0xA8;
+   26          sfr AUXR=0x8E;
+   27          sfr TMOD=0x89;
+   28          sfr TCON=0x88;
+   29          sfr TL0=0x8A;
+   30          sfr TH0=0x8C;
+   31          sfr TL1=0x8B;
+   32          sfr TH1=0x8D;
+   33          sfr SCON=0x98;
+   34          sfr SBUF=0x99;
+   35          sfr WDT_CONTR=0xC1;
+   36          sfr RSTCFG=0xFF;
+   37          sbit MOTOR_BI=P2^0;
+   38          sbit MOTOR_FI=P2^2;
+   39          sbit KEY_SW1=P2^6;
+   40          sbit KEY_SW2=P0^2;
+   41          sbit KEY_SW3=P2^7;
+   42          sbit IR_RX=P1^4;
+   43          sbit IR_TX=P1^7;
+   44          sbit TR0=TCON^4;
+   45          sbit TF0=TCON^5;
+   46          sbit TR1=TCON^6;
+   47          sbit RI=SCON^0;
+   48          sbit TI=SCON^1;
+   49          /* C251使用24位绝对地址访问扩展寄存器；不是0x01xxxx的xdata RAM。 */
+   50          #define XREG(addr) (*(unsigned char volatile far *)(addr))
+   51          #define PWMA_ENO XREG(0x7EFEB1UL)
+   52          #define PWMA_PS XREG(0x7EFEB2UL)
+   53          #define PWMA_IOAUX XREG(0x7EFEB3UL)
+   54          #define PWMA_CR1 XREG(0x7EFEC0UL)
+   55          #define PWMA_EGR XREG(0x7EFEC7UL)
+C251 COMPILER V5.60.0,  main                                                               10/11/26  16:14:36  PAGE 2   
+
+   56          #define PWMA_CCMR4 XREG(0x7EFECBUL)
+   57          #define PWMA_CCER1 XREG(0x7EFECCUL)
+   58          #define PWMA_CCER2 XREG(0x7EFECDUL)
+   59          #define PWMA_PSCRH XREG(0x7EFED0UL)
+   60          #define PWMA_PSCRL XREG(0x7EFED1UL)
+   61          #define PWMA_ARRH XREG(0x7EFED2UL)
+   62          #define PWMA_ARRL XREG(0x7EFED3UL)
+   63          #define PWMA_CCR4H XREG(0x7EFEDBUL)
+   64          #define PWMA_CCR4L XREG(0x7EFEDCUL)
+   65          #define PWMA_BKR XREG(0x7EFEDDUL)
+   66          #define PWMA_DTR XREG(0x7EFEDEUL)
+   67          #define FOSC 11059200UL
+   68          #define T0_RELOAD (65536UL-(FOSC+5000UL)/10000UL)
+   69          #define UART_RELOAD (65536UL-FOSC/115200UL/4UL)
+   70          volatile MotorControl control;
+   71          volatile IrControl ir;
+   72          volatile MotorIrGuard guard;
+   73          volatile unsigned char heartbeat;
+   74          unsigned char divider;
+   75          
+   76          unsigned char read_pressed_keys(void)
+   77          {
+   78   1          unsigned char keys=0;
+   79   1          /* 机械键另一端接地，仅读0表示相应键按下。 */
+   80   1          if (KEY_SW1==0) keys|=1;
+   81   1          if (KEY_SW2==0) keys|=2;
+   82   1          if (KEY_SW3==0) keys|=4;
+   83   1          return keys;
+   84   1      }
+   85          void motor_stop(void) { MOTOR_FI=0; MOTOR_BI=0; }
+   86          void timer0_isr(void) interrupt 1
+   87          {
+   88   1          heartbeat++;
+   89   1          ir_control_tick(&ir, IR_RX);
+   90   1          PWMA_ENO=ir.gate ? 0x80 : 0;
+   91   1          divider++;
+   92   1          if (divider==100) {
+   93   2              divider=0;
+   94   2              motor_control_tick(&control, read_pressed_keys());
+   95   2              motor_ir_guard_tick(&guard, control.running, ir.beam);
+   96   2              MOTOR_BI=0;
+   97   2              MOTOR_FI=guard.actual;
+   98   2          }
+   99   1      }
+  100          void uart_char(unsigned char value)
+  101          {
+  102   1          TI=0; SBUF=value;
+  103   1          while (TI==0) { } /* 中断继续处理按键与红外；阻塞异常由看门狗恢复。 */
+  104   1      }
+  105          void uart_text(const char huge *text)
+  106          {
+  107   1          while (*text) uart_char(*text++);
+  108   1      }
+  109          void hex_digit(unsigned char value)
+  110          {
+  111   1          value&=15;
+  112   1          uart_char(value<10 ? value+'0' : value-10+'A');
+  113   1      }
+  114          void hex_word(unsigned int value)
+  115          {
+  116   1          hex_digit((unsigned char)(value>>12)); hex_digit((unsigned char)(value>>8));
+  117   1          hex_digit((unsigned char)(value>>4)); hex_digit((unsigned char)value);
+  118   1      }
+  119          void status(void)
+  120          {
+  121   1          uart_text("IR003 ");
+C251 COMPILER V5.60.0,  main                                                               10/11/26  16:14:36  PAGE 3   
+
+  122   1          if (guard.actual) uart_text("RUN KEYS=");
+  123   1          else uart_text("STOP KEYS=");
+  124   1          uart_char(KEY_SW1 ? '1' : '0'); uart_char(KEY_SW2 ? '1' : '0'); uart_char(KEY_SW3 ? '1' : '0');
+  125   1          uart_text(" TX="); uart_char((unsigned char)(ir.mode+'0'));
+  126   1          uart_text(" RAW="); uart_char(IR_RX ? '1' : '0');
+  127   1          uart_text(" RST="); hex_word(RSTCFG); uart_text("\r\n");
+  128   1          uart_text("REQ="); uart_char(control.running ? '1' : '0');
+  129   1          uart_text(" BEAM="); uart_char((unsigned char)(ir.beam+'0'));
+  130   1          uart_text(" WAIT="); hex_word(guard.clear_ticks_left); uart_text("\r\n");
+  131   1      }
+  132          void report_ir(void)
+  133          {
+  134   1          unsigned int samples, low, edges;
+  135   1          /* 同一采样窗口原子复制，避免16位计数读到高低字节混合。 */
+  136   1          IE=0; samples=ir.samples; low=ir.low; edges=ir.edges;
+  137   1          ir_control_clear_stats(&ir); IE=0x82;
+  138   1          uart_text("IR003 S="); hex_word(samples);
+  139   1          uart_text(" L="); hex_word(low); uart_text(" E="); hex_word(edges);
+  140   1          uart_text("\r\n");
+  141   1      }
+  142          void configure_ir(unsigned char mode)
+  143          {
+  144   1          unsigned int period;
+  145   1          /* 配置期间强制关闭输出；非法模式也关闭，不能形成常亮命令。 */
+  146   1          IE=0; ir_control_command(&ir, 0); PWMA_ENO=0; IR_TX=0; IE=0x82;
+  147   1          PWMA_CR1=0;
+  148   1          if (mode==0 || mode>5) return;
+  149   1          if (mode==1) period=307;       /* 36.024kHz */
+  150   1          else if (mode!=3) period=291;  /* 38.004kHz，包括联动模式 */
+  151   1          else period=276;              /* 40.070kHz */
+  152   1          PWMA_CCER1=0; PWMA_CCER2=0;
+  153   1          PWMA_PS=0; PWMA_IOAUX=0;
+  154   1          PWMA_PSCRH=0; PWMA_PSCRL=0;
+  155   1          PWMA_ARRH=(unsigned char)((period-1)>>8);
+  156   1          PWMA_ARRL=(unsigned char)(period-1);
+  157   1          PWMA_CCR4H=0; PWMA_CCR4L=(unsigned char)(period/3);
+  158   1          PWMA_CCMR4=0x60;              /* PWM模式1 */
+  159   1          PWMA_CCER2=0x40;              /* 仅通道4N，不开4P；单路继承OC4REF，非互补反相。 */
+  160   1          PWMA_DTR=0; PWMA_BKR=0x80;
+  161   1          PWMA_EGR=1; PWMA_CR1=1;
+  162   1          IE=0; ir_control_command(&ir, mode); IE=0x82;
+  163   1      }
+  164          void main(void)
+  165          {
+  166   1          unsigned char value, previous_run, previous_mode, last_heartbeat;
+  167   1          IE=0;
+  168   1          motor_stop(); P2M1&=0xFA; P2M0|=0x05;
+  169   1          /* 厂商RSTCFG示例：运行期使能2.4V低压复位；不改复位脚配置，不写非易失选�
+             -��。 */
+  170   1          RSTCFG=(RSTCFG&0xBC)|0x41;
+  171   1          P_SW2|=0x80;                  /* EAXFR=1 */
+  172   1          PWMA_ENO=0; PWMA_CR1=0;
+  173   1          IR_TX=0; P1M0=(P1M0&0xEF)|0x80; P1M1=(P1M1&0x7F)|0x10;
+  174   1          /* P1.4高阻输入，不主动拉高接收板OUT。P1.7推挽，GPIO锁存保持低。 */
+  175   1          motor_control_init(&control); ir_control_init(&ir, IR_RX); motor_ir_guard_init(&guard);
+  176   1          divider=0; heartbeat=0; previous_run=0; previous_mode=0; last_heartbeat=0;
+  177   1          P0|=0x04; P0M0&=0xFB; P0M1&=0xFB;
+  178   1          P2|=0xC0; P2M0&=0x3F; P2M1&=0x3F;
+  179   1          P_SW1&=0x3F; P3|=0x03;
+  180   1          P3M0=(P3M0&0xFC)|0x02; P3M1=(P3M1&0xFC)|0x01;
+  181   1          TR0=0; TR1=0; TMOD=0;
+  182   1          AUXR=(AUXR|0xC0)&0xFE;
+  183   1          TH0=(unsigned char)(T0_RELOAD>>8); TL0=(unsigned char)T0_RELOAD;
+  184   1          TH1=(unsigned char)(UART_RELOAD>>8); TL1=(unsigned char)UART_RELOAD;
+  185   1          SCON=0x50; TF0=0; TR1=1; TR0=1; IE=0x82; WDT_CONTR=0x33;
+  186   1          uart_text("BOOT\r\n"); status(); /* 紧接完整IR003身份与TX=0状态。 */
+C251 COMPILER V5.60.0,  main                                                               10/11/26  16:14:36  PAGE 4   
+
+  187   1          for (;;) {
+  188   2              if (last_heartbeat!=heartbeat) { last_heartbeat=heartbeat; WDT_CONTR=0x33; }
+  189   2              if (previous_run!=guard.actual || previous_mode!=ir.mode) {
+  190   3                  previous_run=guard.actual; previous_mode=ir.mode; status();
+  191   3              }
+  192   2              if (ir.samples>=5000) report_ir();
+  193   2              if (RI) {
+  194   3                  value=SBUF; RI=0;
+  195   3                  if (value=='!') {
+  196   4                      IE=0; motor_control_stop(&control); guard.actual=0; motor_stop(); IE=0x82;
+  197   4                      configure_ir(0); status();
+  198   4                  } else if (value=='?') status();
+  199   3                  else if (value=='0') { configure_ir(0); status(); }
+  200   3                  else if (value=='6') { configure_ir(1); status(); }
+  201   3                  else if (value=='8') { configure_ir(2); status(); }
+  202   3                  else if (value=='4') { configure_ir(3); status(); }
+  203   3                  else if (value=='l') { configure_ir(4); status(); }
+  204   3                  else if (value=='h') { configure_ir(5); status(); }
+  205   3              }
+  206   2          }
+  207   1      }
+
+
+Module Information          Static   Overlayable
+------------------------------------------------
+  code size            =      1955     ------
+  ecode size           =    ------     ------
+  data size            =        31          2
+  idata size           =    ------     ------
+  pdata size           =    ------     ------
+  xdata size           =    ------     ------
+  xdata-const size     =    ------     ------
+  edata size           =    ------     ------
+  bit size             =    ------     ------
+  ebit size            =    ------     ------
+  bitaddressable size  =    ------     ------
+  ebitaddressable size =    ------     ------
+  far data size        =    ------     ------
+  huge data size       =    ------     ------
+  const size           =    ------     ------
+  hconst size          =        91     ------
+End of Module Information.
+
+
+C251 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

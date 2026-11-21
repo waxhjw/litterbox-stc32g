@@ -1,0 +1,29 @@
+{
+  "bytes": 2070,
+  "start": "0xff0000",
+  "end": "0xff0815",
+  "sha256": "023a6789c410ff2a62efac32f2664f7f286fb266dcab603fb83364ddb8de83ca",
+  "version": "LB_IR017",
+  "kind": "diagnostic",
+  "model": "STC32G8K64",
+  "source_sha256": "a2d8b29778040d3dde24247bd583469b5ed34771ba7cce98e31b22b3bba72d92",
+  "tool_sha256": "07a77cb10d23f58ac1170de1d13c11ae644e16789f8138ee4277a1a46d93337a",
+  "hardware_tested": false,
+  "purpose": "radar-triggered stop with three-beam and Hall interlocks",
+  "original_functions_inherited": false,
+  "rollback_firmware_available": false,
+  "compiler_license": "official C251 evaluation 2KB",
+  "compiler_options": [
+    "OPTIMIZE(9,SIZE)",
+    "ROM(SMALL)"
+  ],
+  "trim_khz": 11059.2,
+  "extra_sources": {
+    "motor_control.h": "e01526ed8b1aa622205206af4f1621bce01db1e12adba1f996b7d6ca2afe85bd",
+    "motor_ir_guard.h": "7056de98c3bcb7d118bd1ee146fc63b8f15c217c026613a0e0fb3aa43e60abc9",
+    "ir_carrier_state.h": "f6e4a182a50c8509263d152a710aad56a7fb16aa483f5453d6408b500f10a285",
+    "ir_beam_state.h": "b016a22d1981c2cb7b15087d8084d1ea8a6dd6ec4313c8b70eaed52a31e6e4e2"
+  },
+  "diagnostic_scope": "three-beam motor interlock; old single IR link temporarily inactive; motor-only bench test explicitly enabled",
+  "purpose_detail": "IR016 plus raw P4.7 radar diagnostics and a configurable stop interlock; IRC status"
+}

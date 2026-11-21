@@ -1,0 +1,15 @@
+{
+  "folders": [{"name": "猫砂盆 WiFi · STC32G8K64", "path": "."}],
+  "settings": {
+    "window.title": "猫砂盆 STC32G | ${activeEditorShort}${separator}${appName}",
+    "files.encoding": "utf8",
+    "files.exclude": {"**/.tools": true, "**/__pycache__": true},
+    "search.exclude": {"**/.tools": true, "**/build": true},
+    "git.enabled": false,
+    "git.autofetch": false,
+    "cmake.configureOnOpen": false,
+    "cmake.ignoreCMakeListsMissing": true,
+    "cmake.showOptionsMovedNotification": false,
+    "task.allowAutomaticTasks": "off"
+  }
+}

@@ -1,0 +1,376 @@
+L251 LINKER/LOCATER V4.66.93.0                                                          11/11/2026  17:28:09  PAGE 1
+
+
+L251 LINKER/LOCATER V4.66.93.0, INVOKED BY:
+D:\PROJECTS\LITTERBOX-STC32G\.TOOLS\KEIL-C251\C251\BIN\L251.EXE MAIN.OBJ TO LB_IR011 PRINT (LB_IR011.map) 
+
+
+CPU MODE:     251 SOURCE MODE
+INTR FRAME:   4 BYTES SAVED ON INTERRUPT
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  MAIN.OBJ (array_main)
+         COMMENT TYPE 0: C251 V5.60.0
+  D:\PROJECTS\LITTERBOX-STC32G\.TOOLS\KEIL-C251\C251\LIB\C2SS.LIB (?C_START)
+         COMMENT TYPE 0: A251 V4.69.6.0
+
+
+ACTIVE MEMORY CLASSES OF MODULE:  LB_IR011 (array_main)
+
+BASE        START       END         USED      MEMORY CLASS
+==========================================================
+000000H     FF0000H     FFFFFFH     000037H   HCONST
+FF0000H     FF0000H     FFFFFFH     000786H   CODE
+000000H     000000H     00007FH     00002DH   DATA
+000000H     000000H     00FFFFH     000100H   EDATA
+
+
+MEMORY MAP OF MODULE:  LB_IR011 (array_main)
+
+
+START     STOP      LENGTH    ALIGN  RELOC    MEMORY CLASS   SEGMENT NAME
+=========================================================================
+000000H   000007H   000008H   ---    AT..     DATA           "REG BANK 0"
+000008H   00002AH   000023H   BYTE   UNIT     DATA           ?DT?ARRAY_MAIN
+00002BH   00002CH   000002H   BYTE   UNIT     DATA           _DATA_GROUP_
+00002DH   00012CH   000100H   BYTE   UNIT     EDATA          ?STACK
+00012DH   FEFFFFH   FEFED3H   ---    ---      **GAP**
+FF0000H   FF0002H   000003H   ---    OFFS..   CODE           ?CO?start251?4
+FF0003H   FF000AH   000008H   ---    ---      **GAP**
+FF000BH   FF000CH   000002H   ---    OFFS..   CODE           ?PR?IV?1
+FF000DH   FF0136H   00012AH   BYTE   INBLOCK  CODE           ?PR?MAIN?ARRAY_MAIN
+FF0137H   FF0201H   0000CBH   BYTE   INBLOCK  CODE           ?PR?IR_BEAM_CLOSE?ARRAY_MAIN
+FF0202H   FF02C6H   0000C5H   BYTE   INBLOCK  CODE           ?PR?MOTOR_CONTROL_TICK?ARRAY_MAIN
+FF02C7H   FF0346H   000080H   BYTE   INBLOCK  CODE           ?PR?TIMER0_ISR?ARRAY_MAIN
+FF0347H   FF03C3H   00007DH   BYTE   INBLOCK  CODE           ?PR?STATUS?ARRAY_MAIN
+FF03C4H   FF042AH   000067H   BYTE   INBLOCK  CODE           ?PR?IR_CARRIER_TICK?ARRAY_MAIN
+FF042BH   FF0479H   00004FH   BYTE   INBLOCK  CODE           ?PR?REPORT_BEAM?ARRAY_MAIN
+FF047AH   FF04C7H   00004EH   BYTE   INBLOCK  CODE           ?PR?MOTOR_IR_GUARD_TICK?ARRAY_MAIN
+FF04C8H   FF0506H   00003FH   BYTE   INBLOCK  CODE           ?PR?IR_BEAM_ADD?ARRAY_MAIN
+FF0507H   FF0542H   00003CH   BYTE   INBLOCK  CODE           ?PR?HANDLE_COMMAND?ARRAY_MAIN
+FF0543H   FF057BH   000039H   BYTE   INBLOCK  CODE           ?PR?SAMPLE_WINDOW?ARRAY_MAIN
+FF057CH   FF05AAH   00002FH   BYTE   INBLOCK  CODE           ?PR?ADC_READ?ARRAY_MAIN
+FF05ABH   FF05D7H   00002DH   BYTE   INBLOCK  CODE           ?PR?IR_BEAM_INIT?ARRAY_MAIN
+FF05D8H   FF0603H   00002CH   BYTE   INBLOCK  CODE           ?PR?CARRIER_COMMAND?ARRAY_MAIN
+FF0604H   FF062BH   000028H   BYTE   INBLOCK  CODE           ?PR?MOTOR_CONTROL_INIT?ARRAY_MAIN
+FF062CH   FF064DH   000022H   BYTE   INBLOCK  CODE           ?PR?HEX_WORD?ARRAY_MAIN
+FF064EH   FF066DH   000020H   BYTE   INBLOCK  CODE           ?PR?PRESSED_KEYS?ARRAY_MAIN
+FF066EH   FF068CH   00001FH   BYTE   INBLOCK  CODE           ?PR?IR_BEAM_OPEN?ARRAY_MAIN
+FF068DH   FF06AAH   00001EH   BYTE   INBLOCK  CODE           ?PR?HEX_DIGIT?ARRAY_MAIN
+FF06ABH   FF06C6H   00001CH   BYTE   INBLOCK  CODE           ?PR?MOTOR_CONTROL_STOP?ARRAY_MAIN
+FF06C7H   FF06DDH   000017H   BYTE   INBLOCK  CODE           ?PR?IR_CARRIER_START?ARRAY_MAIN
+FF06DEH   FF06F2H   000015H   BYTE   INBLOCK  CODE           ?PR?IR_CARRIER_INIT?ARRAY_MAIN
+FF06F3H   FF0707H   000015H   BYTE   INBLOCK  CODE           ?PR?IR_CARRIER_STOP?ARRAY_MAIN
+FF0708H   FF071CH   000015H   BYTE   INBLOCK  CODE           ?PR?UART_TEXT?ARRAY_MAIN
+FF071DH   FF072FH   000013H   BYTE   INBLOCK  CODE           ?PR?ARRAY_PUSHPULL?ARRAY_MAIN
+FF0730H   FF0741H   000012H   BYTE   INBLOCK  CODE           ?PR?IR_BEAM_READY?ARRAY_MAIN
+FF0742H   FF0752H   000011H   BYTE   INBLOCK  CODE           ?PR?MOTOR_IR_GUARD_INIT?ARRAY_MAIN
+L251 LINKER/LOCATER V4.66.93.0                                                        11/11/2026  17:28:09  PAGE 2
+
+
+FF0753H   FF075FH   00000DH   BYTE   INBLOCK  CODE           ?PR?ARRAY_RELEASE?ARRAY_MAIN
+FF0760H   FF076BH   00000CH   BYTE   INBLOCK  CODE           ?PR?UART_CHAR?ARRAY_MAIN
+FF076CH   FF0777H   00000CH   BYTE   INBLOCK  CODE           ?PR?CARRIER_APPLY?ARRAY_MAIN
+FF0778H   FF078AH   000013H   BYTE   UNIT     CODE           ?C_C51STARTUP
+FF078BH   FF078DH   000003H   BYTE   UNIT     CODE           ?C_C51STARTUP?3
+FF078EH   FF07C4H   000037H   BYTE   UNIT     HCONST         ?HC?ARRAY_MAIN
+
+
+
+OVERLAY MAP OF MODULE:   LB_IR011 (array_main)
+
+
+FUNCTION/MODULE                      BIT_GROUP   DATA_GROUP 
+--> CALLED FUNCTION/MODULE          START  STOP  START  STOP
+============================================================
+timer0_isr/array_main               ----- -----  ----- -----
+  +--> ir_carrier_tick/array_main
+  +--> carrier_apply/array_main
+  +--> ir_beam_open/array_main
+  +--> ir_beam_close/array_main
+  +--> pressed_keys/array_main
+  +--> motor_control_tick/array_main
+  +--> motor_ir_guard_tick/array_main
+
+ir_carrier_tick/array_main          ----- -----  ----- -----
+
+carrier_apply/array_main            ----- -----  ----- -----
+
+ir_beam_open/array_main             ----- -----  ----- -----
+
+ir_beam_close/array_main            ----- -----  ----- -----
+
+pressed_keys/array_main             ----- -----  ----- -----
+
+motor_control_tick/array_main       ----- -----  ----- -----
+
+motor_ir_guard_tick/array_main      ----- -----  ----- -----
+
+*** NEW ROOT **********************
+
+?C_C51STARTUP                       ----- -----  ----- -----
+
+*** NEW ROOT **********************
+
+?C_C51STARTUP?3                     ----- -----  ----- -----
+  +--> main/array_main
+
+main/array_main                     ----- -----  ----- -----
+  +--> array_release/array_main
+  +--> motor_control_init/array_main
+  +--> motor_ir_guard_init/array_main
+  +--> ir_carrier_init/array_main
+  +--> ir_beam_init/array_main
+  +--> uart_text/array_main
+  +--> status/array_main
+  +--> ir_beam_ready/array_main
+  +--> sample_window/array_main
+  +--> handle_command/array_main
+
+array_release/array_main            ----- -----  ----- -----
+
+motor_control_init/array_main       ----- -----  ----- -----
+
+motor_ir_guard_init/array_main      ----- -----  ----- -----
+
+L251 LINKER/LOCATER V4.66.93.0                                                        11/11/2026  17:28:09  PAGE 3
+
+
+ir_carrier_init/array_main          ----- -----  ----- -----
+
+ir_beam_init/array_main             ----- -----  ----- -----
+
+uart_text/array_main                ----- -----  ----- -----
+  +--> uart_char/array_main
+
+uart_char/array_main                ----- -----  ----- -----
+
+status/array_main                   ----- -----  ----- -----
+  +--> uart_text/array_main
+  +--> uart_char/array_main
+  +--> hex_word/array_main
+  +--> hex_digit/array_main
+
+hex_word/array_main                 ----- -----  ----- -----
+  +--> hex_digit/array_main
+
+hex_digit/array_main                ----- -----  ----- -----
+  +--> uart_char/array_main
+
+ir_beam_ready/array_main            ----- -----  ----- -----
+
+sample_window/array_main            ----- -----  ----- -----
+  +--> adc_read/array_main
+  +--> ir_beam_add/array_main
+
+adc_read/array_main                 ----- -----  ----- -----
+
+ir_beam_add/array_main              ----- -----  002BH 002CH
+
+handle_command/array_main           ----- -----  ----- -----
+  +--> motor_control_stop/array_main
+  +--> status/array_main
+  +--> report_beam/array_main
+  +--> carrier_command/array_main
+
+motor_control_stop/array_main       ----- -----  ----- -----
+
+report_beam/array_main              ----- -----  ----- -----
+  +--> uart_text/array_main
+  +--> hex_word/array_main
+  +--> uart_char/array_main
+  +--> hex_digit/array_main
+
+carrier_command/array_main          ----- -----  ----- -----
+  +--> ir_carrier_stop/array_main
+  +--> array_release/array_main
+  +--> array_pushpull/array_main
+  +--> ir_beam_init/array_main
+  +--> ir_carrier_start/array_main
+  +--> status/array_main
+
+ir_carrier_stop/array_main          ----- -----  ----- -----
+
+array_pushpull/array_main           ----- -----  ----- -----
+
+ir_carrier_start/array_main         ----- -----  ----- -----
+
+
+
+PUBLIC SYMBOLS OF MODULE:  LB_IR011 (array_main)
+
+
+      VALUE       CLASS    TYPE      PUBLIC SYMBOL NAME
+L251 LINKER/LOCATER V4.66.93.0                                                        11/11/2026  17:28:09  PAGE 4
+
+
+      =================================================
+      000000FFH   NUMBER   ---       ?C?CODESEG
+      00FF0000H   CODE     ---       ?C?STARTUP
+      00000001H   NUMBER   ---       ?C?XDATASEG
+      00FF0000H   CODE     ---       ?C_STARTUP
+*SFR* 000000BCH   DATA     BYTE      ADC_CONTR
+      00FF057CH   CODE     ---       adc_read
+*SFR* 000000BDH   DATA     BYTE      ADC_RES
+*SFR* 000000BEH   DATA     BYTE      ADC_RESL
+*SFR* 000000DEH   DATA     BYTE      ADCCFG
+      00FF071DH   CODE     ---       array_pushpull
+      00FF0753H   CODE     ---       array_release
+*SFR* 00000080H.4 DATA     BIT       ARRAY_TX1
+*SFR* 000000C8H.2 DATA     BIT       ARRAY_TX2
+*SFR* 000000C8H.3 DATA     BIT       ARRAY_TX3
+*SFR* 0000008EH   DATA     BYTE      AUXR
+      00000015H   DATA     ---       beam
+      00000026H   DATA     ---       carrier
+      00FF076CH   CODE     ---       carrier_apply
+      00FF05D8H   CODE     ---       carrier_command
+      00000008H   DATA     ---       control
+      00000025H   DATA     BYTE      divider
+      00000011H   DATA     ---       guard
+      00FF0507H   CODE     ---       handle_command
+      00000024H   DATA     BYTE      heartbeat
+      00FF068DH   CODE     ---       hex_digit
+      00FF062CH   CODE     ---       hex_word
+*SFR* 000000A8H   DATA     BYTE      IE
+*SFR* 000000A0H.6 DATA     BIT       KEY1
+*SFR* 00000080H.2 DATA     BIT       KEY2
+*SFR* 000000A0H.7 DATA     BIT       KEY3
+      00FF000DH   CODE     ---       main
+*SFR* 000000A0H.0 DATA     BIT       MOTOR_BI
+*SFR* 000000A0H.2 DATA     BIT       MOTOR_FI
+*SFR* 00000080H   DATA     BYTE      P0
+*SFR* 00000094H   DATA     BYTE      P0M0
+*SFR* 00000093H   DATA     BYTE      P0M1
+*SFR* 00000090H   DATA     BYTE      P1
+*SFR* 00000092H   DATA     BYTE      P1M0
+*SFR* 00000091H   DATA     BYTE      P1M1
+*SFR* 000000A0H   DATA     BYTE      P2
+*SFR* 00000096H   DATA     BYTE      P2M0
+*SFR* 00000095H   DATA     BYTE      P2M1
+*SFR* 000000B0H   DATA     BYTE      P3
+*SFR* 000000B2H   DATA     BYTE      P3M0
+*SFR* 000000B1H   DATA     BYTE      P3M1
+*SFR* 000000C8H   DATA     BYTE      P5
+*SFR* 000000CAH   DATA     BYTE      P5M0
+*SFR* 000000C9H   DATA     BYTE      P5M1
+*SFR* 000000A2H   DATA     BYTE      P_SW1
+*SFR* 000000BAH   DATA     BYTE      P_SW2
+      00FF064EH   CODE     ---       pressed_keys
+      00FF042BH   CODE     ---       report_beam
+*SFR* 00000098H.0 DATA     BIT       RI
+*SFR* 000000FFH   DATA     BYTE      RSTCFG
+      00FF0543H   CODE     ---       sample_window
+*SFR* 00000099H   DATA     BYTE      SBUF
+*SFR* 00000098H   DATA     BYTE      SCON
+      00FF0347H   CODE     ---       status
+*SFR* 00000088H   DATA     BYTE      TCON
+*SFR* 00000088H.5 DATA     BIT       TF0
+*SFR* 0000008CH   DATA     BYTE      TH0
+*SFR* 0000008DH   DATA     BYTE      TH1
+*SFR* 00000098H.1 DATA     BIT       TI
+      00000022H   DATA     WORD      tick_half
+L251 LINKER/LOCATER V4.66.93.0                                                        11/11/2026  17:28:09  PAGE 5
+
+
+      00FF02C7H   CODE     ---       timer0_isr
+*SFR* 0000008AH   DATA     BYTE      TL0
+*SFR* 0000008BH   DATA     BYTE      TL1
+*SFR* 00000089H   DATA     BYTE      TMOD
+*SFR* 00000088H.4 DATA     BIT       TR0
+*SFR* 00000088H.6 DATA     BIT       TR1
+      00FF0760H   CODE     ---       uart_char
+      00FF0708H   CODE     ---       uart_text
+*SFR* 000000C1H   DATA     BYTE      WDT_CONTR
+
+
+
+SYMBOL TABLE OF MODULE:  LB_IR011 (array_main)
+
+      VALUE       REP       CLASS    TYPE      SYMBOL NAME
+      ====================================================
+      ---         MODULE    ---      ---       array_main
+      00FF0543H   PUBLIC    CODE     ---       sample_window
+      00FF02C7H   PUBLIC    CODE     ---       timer0_isr
+      00FF071DH   PUBLIC    CODE     ---       array_pushpull
+      00FF042BH   PUBLIC    CODE     ---       report_beam
+      00FF064EH   PUBLIC    CODE     ---       pressed_keys
+      00FF000DH   PUBLIC    CODE     ---       main
+      00FF057CH   PUBLIC    CODE     ---       adc_read
+      00FF0347H   PUBLIC    CODE     ---       status
+      00FF05D8H   PUBLIC    CODE     ---       carrier_command
+      00FF0507H   PUBLIC    CODE     ---       handle_command
+      00FF068DH   PUBLIC    CODE     ---       hex_digit
+      00FF0760H   PUBLIC    CODE     ---       uart_char
+      00FF062CH   PUBLIC    CODE     ---       hex_word
+      00FF0708H   PUBLIC    CODE     ---       uart_text
+      00FF0753H   PUBLIC    CODE     ---       array_release
+      00FF076CH   PUBLIC    CODE     ---       carrier_apply
+      00000008H   PUBLIC    DATA     ---       control
+      00000011H   PUBLIC    DATA     ---       guard
+      00000015H   PUBLIC    DATA     ---       beam
+      00000022H   PUBLIC    DATA     WORD      tick_half
+      00000024H   PUBLIC    DATA     BYTE      heartbeat
+      00000025H   PUBLIC    DATA     BYTE      divider
+      00000026H   PUBLIC    DATA     ---       carrier
+      00000094H   SFRSYM    DATA     BYTE      P0M0
+      000000BEH   SFRSYM    DATA     BYTE      ADC_RESL
+      000000C1H   SFRSYM    DATA     BYTE      WDT_CONTR
+      00000088H.6 SFRSYM    DATA     BIT       TR1
+      00000088H.4 SFRSYM    DATA     BIT       TR0
+      0000008BH   SFRSYM    DATA     BYTE      TL1
+      0000008AH   SFRSYM    DATA     BYTE      TL0
+      0000008DH   SFRSYM    DATA     BYTE      TH1
+      0000008CH   SFRSYM    DATA     BYTE      TH0
+      000000FFH   SFRSYM    DATA     BYTE      RSTCFG
+      00000088H.5 SFRSYM    DATA     BIT       TF0
+      0000008EH   SFRSYM    DATA     BYTE      AUXR
+      000000C8H.3 SFRSYM    DATA     BIT       ARRAY_TX3
+      000000C8H.2 SFRSYM    DATA     BIT       ARRAY_TX2
+      00000080H.4 SFRSYM    DATA     BIT       ARRAY_TX1
+      00000089H   SFRSYM    DATA     BYTE      TMOD
+      00000088H   SFRSYM    DATA     BYTE      TCON
+      00000098H   SFRSYM    DATA     BYTE      SCON
+      00000099H   SFRSYM    DATA     BYTE      SBUF
+      000000BCH   SFRSYM    DATA     BYTE      ADC_CONTR
+      000000A0H.7 SFRSYM    DATA     BIT       KEY3
+      00000098H.1 SFRSYM    DATA     BIT       TI
+      00000080H.2 SFRSYM    DATA     BIT       KEY2
+      000000A0H.6 SFRSYM    DATA     BIT       KEY1
+      00000098H.0 SFRSYM    DATA     BIT       RI
+L251 LINKER/LOCATER V4.66.93.0                                                        11/11/2026  17:28:09  PAGE 6
+
+
+      000000DEH   SFRSYM    DATA     BYTE      ADCCFG
+      000000BDH   SFRSYM    DATA     BYTE      ADC_RES
+      000000A8H   SFRSYM    DATA     BYTE      IE
+      000000BAH   SFRSYM    DATA     BYTE      P_SW2
+      000000A2H   SFRSYM    DATA     BYTE      P_SW1
+      000000C8H   SFRSYM    DATA     BYTE      P5
+      000000C9H   SFRSYM    DATA     BYTE      P5M1
+      000000B0H   SFRSYM    DATA     BYTE      P3
+      000000CAH   SFRSYM    DATA     BYTE      P5M0
+      000000A0H.2 SFRSYM    DATA     BIT       MOTOR_FI
+      000000A0H   SFRSYM    DATA     BYTE      P2
+      000000B1H   SFRSYM    DATA     BYTE      P3M1
+      00000090H   SFRSYM    DATA     BYTE      P1
+      00000095H   SFRSYM    DATA     BYTE      P2M1
+      000000B2H   SFRSYM    DATA     BYTE      P3M0
+      00000080H   SFRSYM    DATA     BYTE      P0
+      00000091H   SFRSYM    DATA     BYTE      P1M1
+      00000096H   SFRSYM    DATA     BYTE      P2M0
+      00000093H   SFRSYM    DATA     BYTE      P0M1
+      00000092H   SFRSYM    DATA     BYTE      P1M0
+      000000A0H.0 SFRSYM    DATA     BIT       MOTOR_BI
+
+      ---         MODULE    ---      ---       ?C_START
+      00FF0000H   PUBLIC    CODE     ---       ?C?STARTUP
+      00FF0000H   PUBLIC    CODE     ---       ?C_STARTUP
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 07A4H BYTE (95%) *
+******************************************************************************
+
+Program Size: data=45.0 edata+hdata=256 xdata=0 const=55 code=1926
+L251 RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,26 @@
+{
+  "bytes": 1185,
+  "start": "0xff0000",
+  "end": "0xff04a0",
+  "sha256": "a034042a3f18572783cdb2e7b040c8a4ec5478f3e4d10587005465f5ef659c47",
+  "version": "LB_WIFI002",
+  "kind": "diagnostic",
+  "model": "STC32G8K64",
+  "source_sha256": "d9050f37f8162a95add3b29037fdc91de7607e887e879d1373bd381729530994",
+  "tool_sha256": "38fbe918939bb10f0fe199b2755c4c467e2cb438b3ad7f98c64dfd85c5d44570",
+  "hardware_tested": false,
+  "purpose": "App DP5 pause bench; motor outputs forced low",
+  "original_functions_inherited": false,
+  "rollback_firmware_available": false,
+  "compiler_license": "official C251 evaluation 2KB",
+  "compiler_options": [
+    "OPTIMIZE(9,SIZE)",
+    "ROM(SMALL)"
+  ],
+  "trim_khz": 11059.2,
+  "extra_sources": {
+    "tuya_link.h": "c7f264970553bfe702da67e5d7c68ec19c0a590865502a797b6a8b9c990b6623"
+  },
+  "diagnostic_scope": "WBR3 UART3, Wi-Fi handshake, and validated DP5 pause state; local motion disabled",
+  "purpose_detail": "independent App bench; WIFI001 for network and IR017 for local-control rollback"
+}

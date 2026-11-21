@@ -1,0 +1,80 @@
+/* 只用于固定、空载的台架电机。定时段代表虚拟一圈，不能作为实体位置反馈。 */
+#ifndef DRUM_BENCH_H
+#define DRUM_BENCH_H
+#include "drum_cycle.h"
+
+#define BENCH_ARM_TICKS 9000U
+#define BENCH_LIGHT_LIMIT 4500U /* 恢复 APP004 的 45 秒台架等待上限，全程等待保护放行。 */
+#define BENCH_TURN_TICKS 100U
+#define BENCH_GAP_TICKS 30U
+#define BENCH_TURNS 4U
+
+enum BenchPhase { BENCH_IDLE, BENCH_ARMED, BENCH_WAIT_LIGHT, BENCH_TURN, BENCH_GAP };
+enum BenchResult { BENCH_NONE, BENCH_DONE, BENCH_BIN_LOST,
+                   BENCH_START_BLOCKED=4, BENCH_STOPPED, BENCH_EXPIRED };
+typedef struct {
+    unsigned short left, recovery_ticks;
+    unsigned char phase, clear_ticks, turns, result;
+} DrumBench;
+
+static void bench_arm(volatile DrumBench *s)
+{
+    s->left=BENCH_ARM_TICKS;
+    s->clear_ticks=0;
+    s->recovery_ticks=0;
+    s->turns=0;
+    s->result=BENCH_NONE;
+    s->phase=BENCH_ARMED;
+}
+
+static unsigned char bench_stop(volatile DrumBench *s, unsigned char result)
+{
+    s->result=result;
+    s->phase=BENCH_IDLE;
+    return DRUM_STOP;
+}
+
+static unsigned char bench_tick(volatile DrumBench *s, unsigned char input,
+                                unsigned char online, unsigned char request)
+{
+    if (s->phase==BENCH_IDLE) return DRUM_STOP;
+    if (online==0 || (input & DRUM_PAUSED)) return bench_stop(s,BENCH_STOPPED);
+    if ((input & DRUM_BIN_READY)==0) return bench_stop(s,BENCH_BIN_LOST);
+    if (s->phase==BENCH_ARMED) {
+        if (request) {
+            s->phase=BENCH_WAIT_LIGHT;
+            s->left=BENCH_LIGHT_LIMIT;
+        } else if (--s->left==0) return bench_stop(s,BENCH_EXPIRED);
+        return DRUM_STOP;
+    }
+    if (s->phase==BENCH_WAIT_LIGHT) {
+        if (--s->left==0) return bench_stop(s,BENCH_START_BLOCKED);
+        if ((input & DRUM_ENV_CLEAR)!=DRUM_ENV_CLEAR) {
+            s->clear_ticks=0;
+            return DRUM_STOP;
+        }
+        if (++s->clear_ticks<DRUM_CLEAR_START) return DRUM_STOP;
+        s->phase=BENCH_TURN;
+        s->left=BENCH_TURN_TICKS;
+    } else {
+        /* 任一保护触发先撤销输出，不推进方向、圈数或当前段的剩余时间。 */
+        if ((input & DRUM_ENV_CLEAR)!=DRUM_ENV_CLEAR) {
+            s->recovery_ticks=DRUM_CLEAR_RESUME;
+            return DRUM_STOP;
+        }
+        if (s->recovery_ticks && --s->recovery_ticks) return DRUM_STOP;
+        if (--s->left==0) {
+            if (s->phase==BENCH_TURN) {
+                if (++s->turns==BENCH_TURNS) return bench_stop(s,BENCH_DONE);
+                s->phase=BENCH_GAP;
+                s->left=BENCH_GAP_TICKS;
+            } else {
+                s->phase=BENCH_TURN;
+                s->left=BENCH_TURN_TICKS;
+            }
+        }
+    }
+    if (s->phase==BENCH_GAP) return DRUM_STOP;
+    return (s->turns & 1) ? DRUM_REVERSE : DRUM_FORWARD;
+}
+#endif

@@ -1,0 +1,196 @@
+C251 COMPILER V5.60.0,  main                                                               10/11/26  11:19:42  PAGE 1   
+
+
+C251 COMPILER V5.60.0, COMPILATION OF MODULE main
+OBJECT MODULE PLACED IN main.obj
+COMPILER INVOKED BY: D:\projects\litterbox-stc32g\.tools\keil-c251\C251\BIN\C251.EXE D:\projects\litterbox-stc32g\diagno
+                    -stics\MOTOR003\main.c SMALL MODSRC INCDIR(D:\projects\litterbox-stc32g\diagnostics\MOTOR003) OBJECT(main.obj) PRINT(main
+                    -.lst) 
+
+stmt  level    source
+
+*** WARNING C500 IN LINE 1 OF D:\projects\litterbox-stc32g\diagnostics\MOTOR003\main.c: MISSING SERIAL NUMBER IN 'TOOLS.
+             -INI'
+    1          /*
+    2           * LB_MOTOR003：生产板STC32G8K64 + SS6625E + 三个板载机械键诊断。
+    3           * 用户明确授权：持续单方向转动，任意机械键长按3s启停，覆盖原程序。
+    4           * 生产CAM/贴片图核对：BI=P2.0经R10；FI=P2.2经R8。
+    5           * SW1=P2.6，SW2=P0.2，SW3=P2.7；按键另一端为MCU第17脚地网。
+    6           * 烧录时电机断开，实测键电平后才接电机，不沿用旧示意图引脚。
+    7           * 不包含原厂限位、防夹、堵转、WiFi、称重；原厂回滚镜像缺失。
+    8           */
+    9          #include "motor_control.h"
+   10          sfr P0 = 0x80;
+   11          sfr P0M0 = 0x94;
+   12          sfr P0M1 = 0x93;
+   13          sfr P2 = 0xA0;
+   14          sfr P2M0 = 0x96;
+   15          sfr P2M1 = 0x95;
+   16          sfr P3 = 0xB0;
+   17          sfr P3M0 = 0xB2;
+   18          sfr P3M1 = 0xB1;
+   19          sfr P_SW1 = 0xA2;
+   20          sfr IE = 0xA8;
+   21          sfr AUXR = 0x8E;
+   22          sfr TMOD = 0x89;
+   23          sfr TCON = 0x88;
+   24          sfr TL0 = 0x8A;
+   25          sfr TH0 = 0x8C;
+   26          sfr TL1 = 0x8B;
+   27          sfr TH1 = 0x8D;
+   28          sfr SCON = 0x98;
+   29          sfr SBUF = 0x99;
+   30          sfr WDT_CONTR = 0xC1;
+   31          sbit MOTOR_BI = P2 ^ 0;
+   32          sbit MOTOR_FI = P2 ^ 2;
+   33          sbit KEY_SW1 = P2 ^ 6;
+   34          sbit KEY_SW2 = P0 ^ 2;
+   35          sbit KEY_SW3 = P2 ^ 7;
+   36          sbit TR0 = TCON ^ 4;
+   37          sbit TF0 = TCON ^ 5;
+   38          sbit TR1 = TCON ^ 6;
+   39          sbit RI = SCON ^ 0;
+   40          sbit TI = SCON ^ 1;
+   41          #define FOSC 11059200UL
+   42          #define T0_RELOAD (65536UL - (FOSC + 500UL) / 1000UL)
+   43          #define UART_RELOAD (65536UL - FOSC / 115200UL / 4UL)
+   44          volatile MotorControl control;
+   45          volatile unsigned char heartbeat;
+   46          unsigned char divider;
+   47          unsigned char read_pressed_keys(void)
+   48          {
+   49   1          unsigned char keys = 0;
+   50   1          /* 这些机械键另一端接地，读0才表示对应键按下。 */
+   51   1          if (KEY_SW1 == 0) keys |= 1;
+   52   1          if (KEY_SW2 == 0) keys |= 2;
+   53   1          if (KEY_SW3 == 0) keys |= 4;
+   54   1          return keys;
+   55   1      }
+C251 COMPILER V5.60.0,  main                                                               10/11/26  11:19:42  PAGE 2   
+
+   56          void motor_stop(void)
+   57          {
+   58   1          /* 两路为低对应驱动停止/高阻；不等于机械已完全静止。 */
+   59   1          MOTOR_FI = 0;
+   60   1          MOTOR_BI = 0;
+   61   1      }
+   62          void timer0_isr(void) interrupt 1
+   63          {
+   64   1          heartbeat++;
+   65   1          divider++;
+   66   1          if (divider == 10) {
+   67   2              divider = 0;
+   68   2              motor_control_tick(&control, read_pressed_keys());
+   69   2              MOTOR_BI = 0;
+   70   2              MOTOR_FI = control.running;
+   71   2          }
+   72   1      }
+   73          void uart_text(const char huge *text)
+   74          {
+   75   1          while (*text) {
+   76   2              TI = 0;
+   77   2              SBUF = *text++;
+   78   2              /* TI==0表示未发完；Timer0中断仍然处理按键。 */
+   79   2              while (TI == 0) { }
+   80   2          }
+   81   1      }
+   82          void status(void)
+   83          {
+   84   1          if (control.running) uart_text("MOTOR003 RUN ");
+   85   1          else uart_text("MOTOR003 STOP ");
+   86   1          uart_text("KEYS=");
+   87   1          if (KEY_SW1) uart_text("1"); else uart_text("0");
+   88   1          if (KEY_SW2) uart_text("1"); else uart_text("0");
+   89   1          if (KEY_SW3) uart_text("1"); else uart_text("0");
+   90   1          uart_text("\r\n");
+   91   1      }
+   92          void main(void)
+   93          {
+   94   1          unsigned char value, previous_run, last_heartbeat;
+   95   1          IE = 0;
+   96   1          /* 先置低锁存值再切推挽；不重配其他应用引脚。 */
+   97   1          motor_stop();
+   98   1          P2M1 &= 0xFA;
+   99   1          P2M0 |= 0x05;
+  100   1          motor_control_init(&control);
+  101   1          divider = 0;
+  102   1          heartbeat = 0;
+  103   1          previous_run = 0;
+  104   1          last_heartbeat = 0;
+  105   1          /* 三个键准双向输入并置1，使用弱上拉；不改变电机控制位。 */
+  106   1          P0 |= 0x04;
+  107   1          P0M0 &= 0xFB;
+  108   1          P0M1 &= 0xFB;
+  109   1          P2 |= 0xC0;
+  110   1          P2M0 &= 0x3F;
+  111   1          P2M1 &= 0x3F;
+  112   1          /* UART1使用P3.0/RX、P3.1/TX，不用WiFi串口。 */
+  113   1          P_SW1 &= 0x3F;
+  114   1          P3 |= 0x03;
+  115   1          P3M0 = (P3M0 & 0xFC) | 0x02;
+  116   1          P3M1 = (P3M1 & 0xFC) | 0x01;
+  117   1          TR0 = 0;
+  118   1          TR1 = 0;
+  119   1          TMOD = 0x00;                 /* T0/T1：16位自动重装、内部时钟。 */
+  120   1          AUXR = (AUXR | 0xC0) & 0xFE; /* 1T，UART1以T1产生波特率。 */
+  121   1          TH0 = (unsigned char)(T0_RELOAD >> 8);
+C251 COMPILER V5.60.0,  main                                                               10/11/26  11:19:42  PAGE 3   
+
+  122   1          TL0 = (unsigned char)T0_RELOAD;
+  123   1          TH1 = (unsigned char)(UART_RELOAD >> 8);
+  124   1          TL1 = (unsigned char)UART_RELOAD;
+  125   1          SCON = 0x50;                 /* UART：115200、8位、无校验、允许接收。 */
+  126   1          TF0 = 0;
+  127   1          TR1 = 1;
+  128   1          TR0 = 1;
+  129   1          IE = 0x82;                   /* 只开总中断与Timer0中断。 */
+  130   1          WDT_CONTR = 0x33;            /* 看门狗约0.57s，复位后重新保持停机。 */
+  131   1          uart_text("MOTOR003 BOOT STOP ANY KEY HOLD 3S\r\n");
+  132   1          for (;;) {
+  133   2              /* 主循环和定时器都推进才喂狗，避免扫描停滞后持续驱动。 */
+  134   2              if (last_heartbeat != heartbeat) {
+  135   3                  last_heartbeat = heartbeat;
+  136   3                  WDT_CONTR = 0x33;
+  137   3              }
+  138   2              if (previous_run != control.running) {
+  139   3                  previous_run = control.running;
+  140   3                  status();
+  141   3              }
+  142   2              if (RI) {
+  143   3                  value = SBUF;
+  144   3                  RI = 0;
+  145   3                  if (value == '!') {
+  146   4                      /* 串口命令只停机、不允许启动，松手前禁止再触发。 */
+  147   4                      IE = 0;
+  148   4                      motor_control_stop(&control);
+  149   4                      motor_stop();
+  150   4                      IE = 0x82;
+  151   4                      status();
+  152   4                  } else if (value == '?') status();
+  153   3              }
+  154   2          }
+  155   1      }
+
+
+Module Information          Static   Overlayable
+------------------------------------------------
+  code size            =       682     ------
+  ecode size           =    ------     ------
+  data size            =        11     ------
+  idata size           =    ------     ------
+  pdata size           =    ------     ------
+  xdata size           =    ------     ------
+  xdata-const size     =    ------     ------
+  edata size           =    ------     ------
+  bit size             =    ------     ------
+  ebit size            =    ------     ------
+  bitaddressable size  =    ------     ------
+  ebitaddressable size =    ------     ------
+  far data size        =    ------     ------
+  huge data size       =    ------     ------
+  const size           =    ------     ------
+  hconst size          =        79     ------
+End of Module Information.
+
+
+C251 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

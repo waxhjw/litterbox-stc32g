@@ -1,0 +1,29 @@
+{
+  "bytes": 1944,
+  "start": "0xff0000",
+  "end": "0xff079f",
+  "sha256": "e3dc8d18a1f9959396cf3adfe83db09efb748eb2d1e8b3ed3e35d99915bc128c",
+  "version": "LB_IR010",
+  "kind": "diagnostic",
+  "model": "STC32G8K64",
+  "source_sha256": "1cf0c91f630ef81c7988d22aaa7548bbe1ee9e6e71d490fb1ad9329fb0f53abe",
+  "tool_sha256": "3bb3cf5d35a5d1f0bd030b723ce8836fca0c6c727b98639ebdbde3b51315a6f8",
+  "hardware_tested": false,
+  "purpose": "serial ISP download test only",
+  "original_functions_inherited": false,
+  "rollback_firmware_available": false,
+  "compiler_license": "official C251 evaluation 2KB",
+  "compiler_options": [
+    "OPTIMIZE(9,SIZE)",
+    "ROM(SMALL)"
+  ],
+  "trim_khz": 11059.2,
+  "extra_sources": {
+    "motor_control.h": "ea5ec5df02f34c5ef8ba37d532c1a3581c220c98dc89ee81cb5a940b1cc5f11b",
+    "motor_ir_guard.h": "6dfc5b342674428318c4bbeb8b142e7e829d5c49ee8015a1d679a8259a77e073",
+    "ir_carrier_state.h": "e4aa8798f3d7a5b5bcb307d43bb64ee9ea183c5d398c031c7d31c31855d3e33a",
+    "ir_beam_state.h": "75f53345874c06e28fe7cba4461df1b3a52bfffa13c7ad8521b855858b46a434"
+  },
+  "diagnostic_scope": "array raw ADC and bounded pin probes; old single IR link temporarily inactive; motor key and stop retained",
+  "purpose_detail": "IR009 plus motor tick restored to 100us base (8 half-ticks, IR008 wrongly used 8200 = 10.8s per tick); window-synchronised peak sampling with 4-window confirmation per channel; reports blocked mask only, no IR stop decisions"
+}

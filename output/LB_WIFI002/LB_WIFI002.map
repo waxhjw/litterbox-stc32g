@@ -1,0 +1,255 @@
+L251 LINKER/LOCATER V4.66.93.0                                                          11/19/2026  17:23:05  PAGE 1
+
+
+L251 LINKER/LOCATER V4.66.93.0, INVOKED BY:
+D:\PROJECTS\LITTERBOX-STC32G\.TOOLS\KEIL-C251\C251\BIN\L251.EXE MAIN.OBJ TO LB_WIFI002 PRINT (LB_WIFI002.map) 
+
+
+CPU MODE:     251 SOURCE MODE
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  MAIN.OBJ (main)
+         COMMENT TYPE 0: C251 V5.60.0
+  D:\PROJECTS\LITTERBOX-STC32G\.TOOLS\KEIL-C251\C251\LIB\C2SS.LIB (?C_START)
+         COMMENT TYPE 0: A251 V4.69.6.0
+
+
+ACTIVE MEMORY CLASSES OF MODULE:  LB_WIFI002 (main)
+
+BASE        START       END         USED      MEMORY CLASS
+==========================================================
+000000H     FF0000H     FFFFFFH     000036H   HCONST
+FF0000H     FF0000H     FFFFFFH     00046BH   CODE
+000000H     000000H     00007FH     000021H   DATA
+000000H     000000H     00FFFFH     000180H   EDATA
+
+
+MEMORY MAP OF MODULE:  LB_WIFI002 (main)
+
+
+START     STOP      LENGTH    ALIGN  RELOC    MEMORY CLASS   SEGMENT NAME
+=========================================================================
+000000H   000007H   000008H   ---    AT..     DATA           "REG BANK 0"
+000008H   000020H   000019H   BYTE   UNIT     DATA           ?DT?MAIN
+000021H   0000A0H   000080H   BYTE   UNIT     EDATA          ?ED?MAIN
+0000A1H   0001A0H   000100H   BYTE   UNIT     EDATA          ?STACK
+0001A1H   FEFFFFH   FEFE5FH   ---    ---      **GAP**
+FF0000H   FF0002H   000003H   ---    OFFS..   CODE           ?CO?start251?4
+FF0003H   FF00C6H   0000C4H   BYTE   INBLOCK  CODE           ?PR?MAIN?MAIN
+FF00C7H   FF0188H   0000C2H   BYTE   INBLOCK  CODE           ?PR?WIFI_FEED?MAIN
+FF0189H   FF0220H   000098H   BYTE   INBLOCK  CODE           ?PR?WIFI_HANDLE_DP?MAIN
+FF0221H   FF02B5H   000095H   BYTE   INBLOCK  CODE           ?PR?DEBUG_STATUS?MAIN
+FF02B6H   FF0325H   000070H   BYTE   INBLOCK  CODE           ?PR?WIFI_DISPATCH?MAIN
+FF0326H   FF034DH   000028H   BYTE   INBLOCK  CODE           ?PR?WIFI_PRODUCT_INFO?MAIN
+FF034EH   FF0370H   000023H   BYTE   INBLOCK  CODE           ?PR?WIFI_FRAME_START?MAIN
+FF0371H   FF0390H   000020H   BYTE   INBLOCK  CODE           ?PR?DEBUG_FIELD?MAIN
+FF0391H   FF03AFH   00001FH   BYTE   INBLOCK  CODE           ?PR?WIFI_REPORT_PAUSE?MAIN
+FF03B0H   FF03CDH   00001EH   BYTE   INBLOCK  CODE           ?PR?DEBUG_HEX?MAIN
+FF03CEH   FF03EBH   00001EH   BYTE   INBLOCK  CODE           ?PR?WIFI_UART_SEND?MAIN
+FF03ECH   FF0407H   00001CH   BYTE   INBLOCK  CODE           ?PR?WIFI_PAIR?MAIN
+FF0408H   FF041CH   000015H   BYTE   INBLOCK  CODE           ?PR?DEBUG_TEXT?MAIN
+FF041DH   FF0431H   000015H   BYTE   INBLOCK  CODE           ?PR?WIFI_UART_BAUD?MAIN
+FF0432H   FF043DH   00000CH   BYTE   INBLOCK  CODE           ?PR?DEBUG_CHAR?MAIN
+FF043EH   FF0447H   00000AH   BYTE   INBLOCK  CODE           ?PR?WIFI_FRAME_DATA?MAIN
+FF0448H   FF044DH   000006H   BYTE   INBLOCK  CODE           ?PR?WIFI_SEND?MAIN
+FF044EH   FF0451H   000004H   BYTE   INBLOCK  CODE           ?PR?WIFI_FRAME_END?MAIN
+FF0452H   FF0464H   000013H   BYTE   UNIT     CODE           ?C_C51STARTUP
+FF0465H   FF0467H   000003H   BYTE   UNIT     CODE           ?C_C51STARTUP?1
+FF0468H   FF046AH   000003H   BYTE   UNIT     CODE           ?C_C51STARTUP?3
+FF046BH   FF04A0H   000036H   BYTE   UNIT     HCONST         ?HC?MAIN
+
+
+
+OVERLAY MAP OF MODULE:   LB_WIFI002 (main)
+
+
+FUNCTION/MODULE              BIT_GROUP   DATA_GROUP 
+--> CALLED FUNCTION/MODULE  START  STOP  START  STOP
+L251 LINKER/LOCATER V4.66.93.0                                                        11/19/2026  17:23:05  PAGE 2
+
+
+====================================================
+?C_C51STARTUP?1             ----- -----  ----- -----
+
+*** NEW ROOT **************
+
+?C_C51STARTUP               ----- -----  ----- -----
+
+*** NEW ROOT **************
+
+?C_C51STARTUP?3             ----- -----  ----- -----
+  +--> main/main
+
+main/main                   ----- -----  ----- -----
+  +--> wifi_uart_baud/main
+  +--> wifi_feed/main
+  +--> wifi_pair/main
+  +--> debug_status/main
+
+wifi_uart_baud/main         ----- -----  ----- -----
+
+wifi_feed/main              ----- -----  ----- -----
+  +--> wifi_dispatch/main
+
+wifi_dispatch/main          ----- -----  ----- -----
+  +--> wifi_frame_start/main
+  +--> wifi_frame_data/main
+  +--> wifi_frame_end/main
+  +--> wifi_product_info/main
+  +--> wifi_send/main
+  +--> wifi_report_pause/main
+  +--> wifi_handle_dp/main
+
+wifi_frame_start/main       ----- -----  ----- -----
+  +--> wifi_frame_data/main
+
+wifi_frame_data/main        ----- -----  ----- -----
+  +--> wifi_uart_send/main
+
+wifi_uart_send/main         ----- -----  ----- -----
+
+wifi_frame_end/main         ----- -----  ----- -----
+  +--> wifi_uart_send/main
+
+wifi_product_info/main      ----- -----  ----- -----
+  +--> wifi_frame_start/main
+  +--> wifi_frame_data/main
+  +--> wifi_frame_end/main
+
+wifi_send/main              ----- -----  ----- -----
+  +--> wifi_frame_start/main
+  +--> wifi_frame_end/main
+
+wifi_report_pause/main      ----- -----  ----- -----
+  +--> wifi_frame_start/main
+  +--> wifi_frame_data/main
+  +--> wifi_frame_end/main
+
+wifi_handle_dp/main         ----- -----  ----- -----
+  +--> wifi_report_pause/main
+
+wifi_pair/main              ----- -----  ----- -----
+  +--> wifi_send/main
+
+debug_status/main           ----- -----  ----- -----
+  +--> debug_text/main
+L251 LINKER/LOCATER V4.66.93.0                                                        11/19/2026  17:23:05  PAGE 3
+
+
+  +--> debug_field/main
+
+debug_text/main             ----- -----  ----- -----
+  +--> debug_char/main
+
+debug_char/main             ----- -----  ----- -----
+
+debug_field/main            ----- -----  ----- -----
+  +--> debug_char/main
+  +--> debug_hex/main
+
+debug_hex/main              ----- -----  ----- -----
+  +--> debug_char/main
+
+
+
+PUBLIC SYMBOLS OF MODULE:  LB_WIFI002 (main)
+
+
+      VALUE       CLASS    TYPE      PUBLIC SYMBOL NAME
+      =================================================
+      000000FFH   NUMBER   ---       ?C?CODESEG
+      00FF0000H   CODE     ---       ?C?STARTUP
+      00000001H   NUMBER   ---       ?C?XDATASEG
+      00FF0000H   CODE     ---       ?C_STARTUP
+*SFR* 0000008EH   DATA     BYTE      AUXR
+*SFR* 000000A8H   DATA     BYTE      IE
+      00FF0003H   CODE     ---       main
+*SFR* 000000A0H.0 DATA     BIT       MOTOR_BI
+*SFR* 000000A0H.2 DATA     BIT       MOTOR_FI
+*SFR* 000000A0H   DATA     BYTE      P2
+*SFR* 00000096H   DATA     BYTE      P2M0
+*SFR* 00000095H   DATA     BYTE      P2M1
+*SFR* 000000B0H   DATA     BYTE      P3
+*SFR* 000000B2H   DATA     BYTE      P3M0
+*SFR* 000000B1H   DATA     BYTE      P3M1
+*SFR* 000000C8H   DATA     BYTE      P5
+*SFR* 000000CAH   DATA     BYTE      P5M0
+*SFR* 000000C9H   DATA     BYTE      P5M1
+*SFR* 000000A2H   DATA     BYTE      P_SW1
+*SFR* 000000BAH   DATA     BYTE      P_SW2
+*SFR* 00000098H.0 DATA     BIT       RI
+*SFR* 000000FFH   DATA     BYTE      RSTCFG
+*SFR* 000000ADH   DATA     BYTE      S3BUF
+*SFR* 000000ACH   DATA     BYTE      S3CON
+*SFR* 00000099H   DATA     BYTE      SBUF
+*SFR* 00000098H   DATA     BYTE      SCON
+*SFR* 000000D4H   DATA     BYTE      T3H
+*SFR* 000000D5H   DATA     BYTE      T3L
+*SFR* 000000DDH   DATA     BYTE      T4T3M
+*SFR* 00000088H   DATA     BYTE      TCON
+*SFR* 00000088H.5 DATA     BIT       TF0
+*SFR* 0000008DH   DATA     BYTE      TH1
+*SFR* 00000098H.1 DATA     BIT       TI
+*SFR* 0000008BH   DATA     BYTE      TL1
+*SFR* 00000089H   DATA     BYTE      TMOD
+*SFR* 00000088H.4 DATA     BIT       TR0
+*SFR* 00000088H.6 DATA     BIT       TR1
+*SFR* 000000C1H   DATA     BYTE      WDT_CONTR
+
+
+
+SYMBOL TABLE OF MODULE:  LB_WIFI002 (main)
+
+      VALUE       REP       CLASS    TYPE      SYMBOL NAME
+L251 LINKER/LOCATER V4.66.93.0                                                        11/19/2026  17:23:05  PAGE 4
+
+
+      ====================================================
+      ---         MODULE    ---      ---       main
+      00FF0003H   PUBLIC    CODE     ---       main
+      000000ACH   SFRSYM    DATA     BYTE      S3CON
+      000000ADH   SFRSYM    DATA     BYTE      S3BUF
+      000000DDH   SFRSYM    DATA     BYTE      T4T3M
+      000000C1H   SFRSYM    DATA     BYTE      WDT_CONTR
+      00000088H.6 SFRSYM    DATA     BIT       TR1
+      00000088H.4 SFRSYM    DATA     BIT       TR0
+      000000D5H   SFRSYM    DATA     BYTE      T3L
+      0000008BH   SFRSYM    DATA     BYTE      TL1
+      000000D4H   SFRSYM    DATA     BYTE      T3H
+      0000008DH   SFRSYM    DATA     BYTE      TH1
+      000000FFH   SFRSYM    DATA     BYTE      RSTCFG
+      00000088H.5 SFRSYM    DATA     BIT       TF0
+      0000008EH   SFRSYM    DATA     BYTE      AUXR
+      00000089H   SFRSYM    DATA     BYTE      TMOD
+      00000088H   SFRSYM    DATA     BYTE      TCON
+      00000098H   SFRSYM    DATA     BYTE      SCON
+      00000099H   SFRSYM    DATA     BYTE      SBUF
+      00000098H.1 SFRSYM    DATA     BIT       TI
+      00000098H.0 SFRSYM    DATA     BIT       RI
+      000000A8H   SFRSYM    DATA     BYTE      IE
+      000000BAH   SFRSYM    DATA     BYTE      P_SW2
+      000000A2H   SFRSYM    DATA     BYTE      P_SW1
+      000000C8H   SFRSYM    DATA     BYTE      P5
+      000000C9H   SFRSYM    DATA     BYTE      P5M1
+      000000B0H   SFRSYM    DATA     BYTE      P3
+      000000CAH   SFRSYM    DATA     BYTE      P5M0
+      000000A0H.2 SFRSYM    DATA     BIT       MOTOR_FI
+      000000A0H   SFRSYM    DATA     BYTE      P2
+      000000B1H   SFRSYM    DATA     BYTE      P3M1
+      00000095H   SFRSYM    DATA     BYTE      P2M1
+      000000B2H   SFRSYM    DATA     BYTE      P3M0
+      00000096H   SFRSYM    DATA     BYTE      P2M0
+      000000A0H.0 SFRSYM    DATA     BIT       MOTOR_BI
+
+      ---         MODULE    ---      ---       ?C_START
+      00FF0000H   PUBLIC    CODE     ---       ?C?STARTUP
+      00FF0000H   PUBLIC    CODE     ---       ?C_STARTUP
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0488H BYTE (56%) *
+******************************************************************************
+
+Program Size: data=33.0 edata+hdata=384 xdata=0 const=54 code=1131
+L251 RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,26 @@
+{
+  "bytes": 2071,
+  "start": "0xff0000",
+  "end": "0xff0819",
+  "sha256": "4bde5c9eef51f92eb879a9184fd21d533e387bb05582e5e3694de5270c9d1d51",
+  "version": "LB_IR003",
+  "kind": "diagnostic",
+  "model": "STC32G8K64",
+  "source_sha256": "a8a9d72cbc4ff73b04385661bd482a07d8a17a00a90471dccfb975a924063878",
+  "tool_sha256": "5dcc493a2ade60bd8efef6b83204f42e4ce8a9ef021eb9790ce4ce6a9e492bc1",
+  "hardware_tested": false,
+  "purpose": "serial ISP download test only",
+  "original_functions_inherited": false,
+  "rollback_firmware_available": false,
+  "compiler_license": "official C251 evaluation 2KB",
+  "compiler_options": [
+    "OPTIMIZE(9,SIZE)"
+  ],
+  "trim_khz": 11059.2,
+  "extra_sources": {
+    "motor_control.h": "ea5ec5df02f34c5ef8ba37d532c1a3581c220c98dc89ee81cb5a940b1cc5f11b",
+    "ir_control.h": "23ec2d27200b0b5623f45bee394c39cb71c80f620c09cca7fe74679d791ae4ea",
+    "motor_ir_guard.h": "d1857a090b9a18f5bdfad62836bb66ea172e18675600c33bf55b175af338f700"
+  },
+  "purpose_detail": "beam interruption inhibits motor; clear for 10s permits requested run; raw IR and bounded tests retained"
+}

@@ -1,0 +1,22 @@
+{
+  "bytes": 1644,
+  "start": "0xff0000",
+  "end": "0xff066e",
+  "sha256": "2fe89abb866e9819d5e715ea35b2fa90df8f69b1a6e6b54e9c7d2c44212124dc",
+  "version": "LB_IR001",
+  "kind": "diagnostic",
+  "model": "STC32G8K64",
+  "source_sha256": "6a87a8b6686b017f2db1841c5d0a04d8dfb407b48c4a507c790c49eaf50457a8",
+  "tool_sha256": "5b5d328c02c08b50bb673a732742bf983378f6274e70bbdc358e210ef3c835c7",
+  "hardware_tested": false,
+  "purpose": "serial ISP download test only",
+  "original_functions_inherited": false,
+  "rollback_firmware_available": false,
+  "compiler_license": "official C251 evaluation 2KB",
+  "trim_khz": 11059.2,
+  "extra_sources": {
+    "motor_control.h": "ea5ec5df02f34c5ef8ba37d532c1a3581c220c98dc89ee81cb5a940b1cc5f11b",
+    "ir_control.h": "fce91f00903af2ad7183ae05c577ea1511b22c6baa79c5f52458dc18906b9941"
+  },
+  "purpose_detail": "CLEAN hold 3s toggles continuous motor; startup stopped; no original protections"
+}

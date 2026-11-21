@@ -1,0 +1,311 @@
+C251 COMPILER V5.60.0,  array_main                                                         11/11/26  17:31:53  PAGE 1   
+
+
+C251 COMPILER V5.60.0, COMPILATION OF MODULE array_main
+OBJECT MODULE PLACED IN main.obj
+COMPILER INVOKED BY: D:\projects\litterbox-stc32g\.tools\keil-c251\C251\BIN\C251.EXE D:\projects\litterbox-stc32g\diagno
+                    -stics\IR012\array_main.c SMALL MODSRC INCDIR(D:\projects\litterbox-stc32g\diagnostics\IR012) OBJECT(main.obj) PRINT(main
+                    -.lst) OPTIMIZE(9,SIZE) ROM(SMALL) 
+
+stmt  level    source
+
+*** WARNING C500 IN LINE 1 OF D:\projects\litterbox-stc32g\diagnostics\IR012\array_main.c: MISSING SERIAL NUMBER IN 'TOO
+             -LS.INI'
+    1          /* IR012：修 IR011 现场实测暴露的"采样跨窗污染下一窗"缺陷。
+    2           * 版本递增原因：IR011 已烧录并冻结，不能覆盖。
+    3           * IR011 现场现象（COM9，三路全通）：连读六次 P 在 {0F38,03EB,0F20} 与
+    4           *   {03CF,0F5C,03C7} 之间跳，M 在 010/202/303 之间跳，B 恒为 0。
+    5           * 根因有两个：
+    6           *   1) 报告读的是实时累加器 peak[]，open() 每窗清零，45字节@115200≈3.9ms
+    7           *      跨掉4个窗口，读到的只是某一瞬间的半截数据 —— 峰值跳变是假象。
+    8           *   2) 真问题是采样太慢：ADCTIM=0x3F（最长采样时间）+ ADCCFG=0x2F（最慢分频），
+    9           *      一次 adc_read 约100us，4轮×3路共12次≈1200us，必然跨过1ms窗口。
+   10           *      跨窗后的结果被记到下一个窗口的 peak 上，而 sampled=1 又让 close 照常结算
+   11           *      → miss 在 0..3 之间来回跳，永远到不了4，遮挡永远判不出来。
+   12           *      现场读到的 04EE(1262) 这个介于暗/亮之间的值，就是采样保持电容
+   13           *      跨在窗口边界上的直接证据。
+   14           * 修法：
+   15           *   a) 轮数 4→2、起始门槛 45→55 拍（剩724us），让整批尽量落在窗内；
+   16           *   b) 加窗口序号 gen 守跨窗：gen 一变立即停手，这一批不属于任何窗口，
+   17           *      绝不把剩余轮次写进新窗口的累加器；
+   18           *   c) close() 结算时把峰值拷进 last[]，'a' 报 last 而不是实时 peak。
+   19           *
+   20           * 在IR008三路载波基础上加入"发射窗口内取峰值 + 连续N窗确认"的光路判定。
+   21           * 2026-11-11 IR008实测：载波静默时三路 957~984（约1.19V暗态），38.13kHz载波到达
+   22           * 接收头时峰值冲到 3896~3928（约4.8V），三路对称；命中率8%恰好等于1ms/10ms占空
+             -比
+   23           * —— 接收输出只在发射窗口内有效，随机时刻读必漏。故本版采样与窗口严�
+             -�同步：
+   24           * ISR在burst载入那一拍置窗口开、在burst归零那一拍结算，主循环只在窗口内取�
+             -�值。
+   25           * 判定：某路连续4个已采样窗口峰值都低于2000才认定遮挡；未采样窗口不参与�
+             -��定。
+   26           * 本版仍然只报状态，不做遮挡停机；电机只由按键长按控制。
+   27           * 为了压进C251评估版2KB：删除IR008的直流引脚探测（A~F命令，硬件已确认无需再
+             -用）
+   28           * 与瞬时ADC打印，只保留窗口峰值、连续计数和遮挡位图。
+   29           */
+   30          #include "motor_control.h"
+   31          #include "motor_ir_guard.h"
+   32          #include "ir_carrier_state.h"
+   33          #include "ir_beam_state.h"
+   34          sfr P0=0x80; sfr P0M0=0x94; sfr P0M1=0x93;
+   35          sfr P1=0x90; sfr P1M0=0x92; sfr P1M1=0x91;
+   36          sfr P2=0xA0; sfr P2M0=0x96; sfr P2M1=0x95;
+   37          sfr P3=0xB0; sfr P3M0=0xB2; sfr P3M1=0xB1;
+   38          sfr P5=0xC8; sfr P5M0=0xCA; sfr P5M1=0xC9;
+   39          sfr P_SW1=0xA2; sfr P_SW2=0xBA;
+   40          sfr IE=0xA8; sfr AUXR=0x8E; sfr TMOD=0x89; sfr TCON=0x88;
+   41          sfr TL0=0x8A; sfr TH0=0x8C; sfr TL1=0x8B; sfr TH1=0x8D;
+   42          sfr SCON=0x98; sfr SBUF=0x99; sfr WDT_CONTR=0xC1; sfr RSTCFG=0xFF;
+   43          sfr ADC_CONTR=0xBC; sfr ADC_RES=0xBD; sfr ADC_RESL=0xBE; sfr ADCCFG=0xDE;
+   44          sbit MOTOR_BI=P2^0; sbit MOTOR_FI=P2^2;
+   45          sbit KEY1=P2^6; sbit KEY2=P0^2; sbit KEY3=P2^7;
+   46          sbit ARRAY_TX1=P0^4; sbit ARRAY_TX2=P5^2; sbit ARRAY_TX3=P5^3;
+   47          sbit TR0=TCON^4; sbit TF0=TCON^5; sbit TR1=TCON^6;
+   48          sbit RI=SCON^0; sbit TI=SCON^1;
+   49          #define XREG(addr) (*(unsigned char volatile far *)(addr))
+   50          #define ADCTIM XREG(0x7EFEA8UL)
+C251 COMPILER V5.60.0,  array_main                                                         11/11/26  17:31:53  PAGE 2   
+
+   51          #define FOSC 11059200UL
+   52          /* 145个时钟半周期 → 11.0592M/145/2 = 38.13kHz；用-145而非-144避免中断重载偏差。 */
+   53          #define T0_HALF_CLOCKS 145UL
+   54          #define T0_RELOAD (65536UL-T0_HALF_CLOCKS)
+   55          #define UART_RELOAD (65536UL-FOSC/115200UL/4UL)
+   56          /* 1ms窗口=76个半周期；9ms静默=684个半周期；合计760个半周期≈10ms。 */
+   57          #define BURST_HALF 76U
+   58          #define GATE_HALF 684U
+   59          /* 恢复IR007的100us基准节拍：8×13.11us≈105us，再100分频≈10.5ms，
+   60           * 与IR007的100us×100=10ms基本一致，长按300拍仍约3秒。
+   61           * 注意IR008误写成8200（8200×13.11us≈108ms），使电机节拍变成10.8秒/拍，
+   62           * 长按需54分钟才触发；本版改回8。 */
+   63          #define TICK_HALF_PER_100US 8U
+   64          /* 一个窗口内最多采2轮三路ADC。IR011的4轮是错的：ADCTIM=0x3F最长采样时间下
+   65           * 一次转换约100us，12次远超1ms窗口，必然跨窗并把结果记到下一个窗口账上。
+   66           * 2轮约600us，配合BEAM_START_TICKS=55（剩724us）可以整批落在窗内。
+   67           * BEAM_START_TICKS / BEAM_GUARD_TICKS 定义在 ir_beam_state.h，与主循环共用同一份判据。 *
+             -/
+   68          #define BEAM_ROUNDS 2U
+   69          volatile MotorControl control;
+   70          volatile MotorIrGuard guard;
+   71          volatile IrCarrier carrier;
+   72          volatile IrBeam beam;
+   73          volatile unsigned char heartbeat;
+   74          unsigned int tick_half;
+   75          unsigned char divider;
+   76          
+   77          
+   78          void array_release(void)
+   79          {
+   80   1          /* 只释放三个控制脚，不改按键P0.2和其它GPIO；高阻不是光学关闭证明。 */
+   81   1          P0M1|=0x10; P0M0&=0xEF;
+   82   1          P5M1|=0x0C; P5M0&=0xF3;
+   83   1      }
+   84          void array_pushpull(void)
+   85          {
+   86   1          /* 先写锁存值再切推挽，避免切换瞬间产生毛刺把发射管点亮。 */
+   87   1          ARRAY_TX1=0; ARRAY_TX2=0; ARRAY_TX3=0;
+   88   1          P0M1&=0xEF; P0M0|=0x10;
+   89   1          P5M1&=0xF3; P5M0|=0x0C;
+   90   1      }
+   91          unsigned char pressed_keys(void)
+   92          {
+   93   1          unsigned char keys=0;
+   94   1          if (KEY1==0) keys|=1;
+   95   1          if (KEY2==0) keys|=2;
+   96   1          if (KEY3==0) keys|=4;
+   97   1          return keys;
+   98   1      }
+   99          /* 三路同步：同一电平同时落到三个发射脚。 */
+  100          void carrier_apply(unsigned char level)
+  101          {
+  102   1          ARRAY_TX1=level; ARRAY_TX2=level; ARRAY_TX3=level;
+  103   1      }
+  104          void timer0_isr(void) interrupt 1
+  105          {
+  106   1          unsigned char level;
+  107   1          heartbeat++;
+  108   1          if (carrier.mode!=CARRIER_IDLE) {
+  109   2              level=ir_carrier_tick(&carrier,BURST_HALF,GATE_HALF);
+  110   2              carrier_apply(level);
+  111   2              /* burst刚载入=窗口开始；burst归零=窗口结束。两者都只在边界那一拍成立�
+             -�� */
+  112   2              if (carrier.burst_ticks==BURST_HALF) ir_beam_open(&beam);
+  113   2              else if (carrier.burst_ticks==0 && beam.in_window) ir_beam_close(&beam);
+  114   2          }
+C251 COMPILER V5.60.0,  array_main                                                         11/11/26  17:31:53  PAGE 3   
+
+  115   1          if (++tick_half>=TICK_HALF_PER_100US) {
+  116   2              tick_half=0;
+  117   2              if (++divider>=100) {
+  118   3                  divider=0;
+  119   3                  motor_control_tick(&control,pressed_keys());
+  120   3                  /* 采样阶段无有效光路判定；保持未接模块也能独立测试电机的约定。
+             - */
+  121   3                  motor_ir_guard_tick(&guard,control.running,IR_UNKNOWN);
+  122   3                  MOTOR_BI=0; MOTOR_FI=guard.actual;
+  123   3              }
+  124   2          }
+  125   1      }
+  126          void uart_char(unsigned char c)
+  127          {
+  128   1          TI=0; SBUF=c;
+  129   1          while (TI==0) { } /* 期间中断继续翻转载波，主循环异常由看门狗恢复。 */
+  130   1      }
+  131          void uart_text(const char far *p) { while (*p) uart_char(*p++); }
+  132          void hex_digit(unsigned char n) { n&=15; uart_char(n<10 ? n+'0' : n-10+'A'); }
+  133          void hex_word(unsigned int n)
+  134          {
+  135   1          hex_digit((unsigned char)(n>>12)); hex_digit((unsigned char)(n>>8));
+  136   1          hex_digit((unsigned char)(n>>4)); hex_digit((unsigned char)n);
+  137   1      }
+  138          void status(void)
+  139          {
+  140   1          uart_text(guard.actual ? "IR9 R K=" : "IR9 S K=");
+  141   1          uart_char(KEY1 ? '1':'0'); uart_char(KEY2 ? '1':'0'); uart_char(KEY3 ? '1':'0');
+  142   1          uart_text(" R="); hex_word(RSTCFG);
+  143   1          uart_text(" Q="); hex_digit(control.running);
+  144   1          uart_text(" C="); hex_digit(carrier.mode);
+  145   1          uart_text(" B="); hex_digit(beam.blocked);
+  146   1          uart_text("\r\n");
+  147   1      }
+  148          unsigned int adc_read(unsigned char channel)
+  149          {
+  150   1          unsigned int timeout=2000;
+  151   1          ADC_CONTR=0xC0|channel; /* 开电源、选通道、清旧FLAG并启动。 */
+  152   1          while ((ADC_CONTR&0x20)==0) {
+  153   2              if (--timeout==0) { ADC_CONTR=0; return 0xFFFF; }
+  154   2          }
+  155   1          ADC_CONTR&=0xDF;
+  156   1          return ((unsigned int)ADC_RES<<8)|ADC_RESL;
+  157   1      }
+  158          /* 只在窗口内调用：连采几轮取峰值，避开窗口外的暗态读数。
+  159           * 用窗口序号gen守跨窗：一轮3次ADC约300us，窗口只有1ms，
+  160           * 转换之间窗口随时可能翻页。所以先把三个值收到局部变量，
+  161           * 转换完再查gen——变了就整轮丢弃，一个值都不许落地，
+  162           * 因为此时这三个读数分属两个不同窗口，谁都不该认领它。
+  163           * 已经采完的前几轮属于旧窗口（旧窗口close已结算），保留有效。
+  164           * 一轮都没落成则sampled保持0，close直接跳过本窗。 */
+  165          void sample_window(void)
+  166          {
+  167   1          unsigned char round, start_gen;
+  168   1          unsigned int a, b, c;
+  169   1          beam.fresh=0;
+  170   1          start_gen=beam.gen;
+  171   1          for (round=0; round<BEAM_ROUNDS; round++) {
+  172   2              a=adc_read(14); b=adc_read(0); c=adc_read(1);
+  173   2              if (beam.gen!=start_gen) break;
+  174   2              beam.sampled=1;
+  175   2              ir_beam_add(&beam, a, b, c);
+  176   2          }
+  177   1      }
+  178          /* 最近结算窗口的三路峰值 + 连续未收到光的窗口数 + 遮挡位图，一次读全。
+  179           * 必须读last[]而不是peak[]：打印45字节约3.9ms跨4个窗口，
+C251 COMPILER V5.60.0,  array_main                                                         11/11/26  17:31:53  PAGE 4   
+
+  180           * 实时累加器早被open()清零过，读到的只是半截数据，无法诊断。 */
+  181          void report_beam(void)
+  182          {
+  183   1          uart_text("IR9 P=");
+  184   1          hex_word(beam.last[0]); uart_char(',');
+  185   1          hex_word(beam.last[1]); uart_char(',');
+  186   1          hex_word(beam.last[2]);
+  187   1          uart_text(" M=");
+  188   1          hex_digit(beam.miss[0]); hex_digit(beam.miss[1]); hex_digit(beam.miss[2]);
+  189   1          uart_text(" B="); hex_digit(beam.blocked); uart_text("\r\n");
+  190   1      }
+  191          /* 载波开关：'c'=三路同步发，'k'=停。
+  192           * 开载波时清空判定历史；关载波时停状态机、钉低三个脚并释放，保证发射管
+             -彻底灭。 */
+  193          void carrier_command(unsigned char mode)
+  194          {
+  195   1          IE=0;
+  196   1          if (mode==CARRIER_IDLE) {
+  197   2              ir_carrier_stop(&carrier);
+  198   2              ARRAY_TX1=0; ARRAY_TX2=0; ARRAY_TX3=0;
+  199   2              array_release();
+  200   2          } else {
+  201   2              array_pushpull();
+  202   2              ir_beam_init(&beam);
+  203   2              ir_carrier_start(&carrier);
+  204   2          }
+  205   1          IE=0x82;
+  206   1          status();
+  207   1      }
+  208          void handle_command(unsigned char value)
+  209          {
+  210   1          if (value=='!' || value=='0') {
+  211   2              IE=0; motor_control_stop(&control); guard.actual=0; MOTOR_BI=0; MOTOR_FI=0;
+  212   2              IE=0x82;
+  213   2              carrier_command(CARRIER_IDLE);
+  214   2          } else if (value=='?') status();
+  215   1          else if (value=='a') report_beam();
+  216   1          else if (value=='c') carrier_command(CARRIER_SYNC);
+  217   1          else if (value=='k') carrier_command(CARRIER_IDLE);
+  218   1      }
+  219          void main(void)
+  220          {
+  221   1          unsigned char value,last_heartbeat=0,previous_run=0;
+  222   1          IE=0; MOTOR_BI=0; MOTOR_FI=0;
+  223   1          P2M1&=0xFA; P2M0|=0x05;
+  224   1          RSTCFG=(RSTCFG&0xBC)|0x41; P_SW2|=0x80;
+  225   1          /* 三接收脚内部4K上拉：VDD已实测5.1V仍读0，疑似开漏输出（手册1767页定义）
+             -。 */
+  226   1          XREG(0x7EFE10UL)|=0x40; /* P0PU.bit6 → P0.6/ADC14/REV1 */
+  227   1          XREG(0x7EFE11UL)|=0x03; /* P1PU.bit1/bit0 → P1.1/REV3、P1.0/ADC0/REV2 */
+  228   1          array_release();
+  229   1          P0M0&=0xBB; P0M1=(P0M1&0xFB)|0x40; /* P0.6高阻ADC14，P0.2原按键准双向。 */
+  230   1          P1M0=(P1M0&0xFC)|0x80; P1M1=(P1M1&0x7F)|0x03; /* ADC0/1输入，旧Q10控制脚保持低。 */
+  231   1          P1&=0x7F; XREG(0x7EFEB1UL)=0; XREG(0x7EFEC0UL)=0;
+  232   1          P0|=0x04; P2|=0xC0; P2M0&=0x3F; P2M1&=0x3F;
+  233   1          P_SW1&=0x3F; P3|=0x03; P3M0=(P3M0&0xFC)|0x02; P3M1=(P3M1&0xFC)|0x01;
+  234   1          ADCTIM=0x3F; ADCCFG=0x2F; ADC_CONTR=0x80;
+  235   1          motor_control_init(&control); motor_ir_guard_init(&guard);
+  236   1          ir_carrier_init(&carrier); ir_beam_init(&beam); tick_half=0; divider=0;
+  237   1          heartbeat=0;
+  238   1          TR0=0; TR1=0; TMOD=0; AUXR=(AUXR|0xC0)&0xFE;
+  239   1          TH0=(unsigned char)(T0_RELOAD>>8); TL0=(unsigned char)T0_RELOAD;
+  240   1          TH1=(unsigned char)(UART_RELOAD>>8); TL1=(unsigned char)UART_RELOAD;
+  241   1          SCON=0x50; TF0=0; TR1=1; TR0=1; IE=0x82; WDT_CONTR=0x33;
+  242   1          uart_text("BOOT\r\n"); status();
+  243   1          for (;;) {
+C251 COMPILER V5.60.0,  array_main                                                         11/11/26  17:31:53  PAGE 5   
+
+  244   2              if (last_heartbeat!=heartbeat) { last_heartbeat=heartbeat; WDT_CONTR=0x33; }
+  245   2              if (previous_run!=guard.actual) { previous_run=guard.actual; status(); }
+  246   2              /* 只在窗口前半段采样：剩余拍数不足BEAM_START_TICKS就整窗放弃。
+  247   2               * 用burst_ticks而非fresh当门闸——fresh只是个"这一窗开过"的粘滞标志，
+  248   2               * 主循环被报告打印占住时它早已不反映当前是否真的在发射。 */
+  249   2              if (carrier.mode!=CARRIER_IDLE && ir_beam_ready(&beam, carrier.burst_ticks))
+  250   2                  sample_window();
+  251   2              if (RI) {
+  252   3                  value=SBUF; RI=0;
+  253   3                  handle_command(value);
+  254   3              }
+  255   2          }
+  256   1      }
+
+
+Module Information          Static   Overlayable
+------------------------------------------------
+  code size            =      1956     ------
+  ecode size           =    ------     ------
+  data size            =        42          6
+  idata size           =    ------     ------
+  pdata size           =    ------     ------
+  xdata size           =    ------     ------
+  xdata-const size     =    ------     ------
+  edata size           =    ------     ------
+  bit size             =    ------     ------
+  ebit size            =    ------     ------
+  bitaddressable size  =    ------     ------
+  ebitaddressable size =    ------     ------
+  far data size        =    ------     ------
+  huge data size       =    ------     ------
+  const size           =    ------     ------
+  hconst size          =        55     ------
+End of Module Information.
+
+
+C251 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

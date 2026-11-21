@@ -1,0 +1,29 @@
+{
+  "bytes": 2072,
+  "start": "0xff0000",
+  "end": "0xff081a",
+  "sha256": "cbf072c960348a487c9248f9b66351c58a88f281113370950e9686896e18beab",
+  "version": "LB_IR013",
+  "kind": "diagnostic",
+  "model": "STC32G8K64",
+  "source_sha256": "fea5ff929e30ec3b3e261fea6a2329d761adbca273f201e144a0b31f488b003c",
+  "tool_sha256": "09517eb875f82ab55b35c958b7d2b75c3653f9aeb201f5ffa0410e572d5785fb",
+  "hardware_tested": false,
+  "purpose": "three-beam motor interlock bench test",
+  "original_functions_inherited": false,
+  "rollback_firmware_available": false,
+  "compiler_license": "official C251 evaluation 2KB",
+  "compiler_options": [
+    "OPTIMIZE(9,SIZE)",
+    "ROM(SMALL)"
+  ],
+  "trim_khz": 11059.2,
+  "extra_sources": {
+    "motor_control.h": "ea5ec5df02f34c5ef8ba37d532c1a3581c220c98dc89ee81cb5a940b1cc5f11b",
+    "motor_ir_guard.h": "7056de98c3bcb7d118bd1ee146fc63b8f15c217c026613a0e0fb3aa43e60abc9",
+    "ir_carrier_state.h": "caf91900607e9ec3926a106b5624c619d80c7a6034cf2bcd65372b28a3c508eb",
+    "ir_beam_state.h": "3f642850ead1f4ab0c75b892d1fff215c9824231bfc680d88bd53462614567f9"
+  },
+  "diagnostic_scope": "three-beam motor interlock; old single IR link temporarily inactive; motor-only bench test explicitly enabled",
+  "purpose_detail": "IR012 plus automatic carrier and three-beam stop/resume interlock; snapshot samples and diagnostics; ID IRA"
+}

@@ -1,0 +1,26 @@
+{
+  "bytes": 934,
+  "start": "0xff0000",
+  "end": "0xff03a5",
+  "sha256": "ffb4f84b13a64865e18dea2c541aa747426391eebbc633bf1a5170bc1cd9bc1d",
+  "version": "LB_WIFI001",
+  "kind": "diagnostic",
+  "model": "STC32G8K64",
+  "source_sha256": "24a0ebd01f9665f5305baced3281f101f553acae3e02246d6fdfc79762f24872",
+  "tool_sha256": "42717f7ddc18cee79cd92ecfbe139c0ea84a3744d36cce0fb08b476ab0fa0706",
+  "hardware_tested": false,
+  "purpose": "WBR3 communication and pairing bench; motor outputs forced low",
+  "original_functions_inherited": false,
+  "rollback_firmware_available": false,
+  "compiler_license": "official C251 evaluation 2KB",
+  "compiler_options": [
+    "OPTIMIZE(9,SIZE)",
+    "ROM(SMALL)"
+  ],
+  "trim_khz": 11059.2,
+  "extra_sources": {
+    "tuya_link.h": "7f5bb8998ec104ab3c99577e4108b71992e51372961814c4f44f541df5837639"
+  },
+  "diagnostic_scope": "WBR3 UART3, Wi-Fi handshake, explicit pairing, and passive DP counters; local motion disabled",
+  "purpose_detail": "independent Wi-Fi bench approved; IR017 remains the local-control rollback"
+}

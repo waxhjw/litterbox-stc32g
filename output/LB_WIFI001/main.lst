@@ -1,0 +1,202 @@
+C251 COMPILER V5.60.0,  main                                                               19/11/26  17:00:19  PAGE 1   
+
+
+C251 COMPILER V5.60.0, COMPILATION OF MODULE main
+OBJECT MODULE PLACED IN main.obj
+COMPILER INVOKED BY: D:\projects\litterbox-stc32g\.tools\keil-c251\C251\BIN\C251.EXE D:\projects\litterbox-stc32g\diagno
+                    -stics\WIFI001\main.c SMALL MODSRC INCDIR(D:\projects\litterbox-stc32g\diagnostics\WIFI001) OBJECT(main.obj) PRINT(main.l
+                    -st) OPTIMIZE(9,SIZE) ROM(SMALL) 
+
+stmt  level    source
+
+*** WARNING C500 IN LINE 1 OF D:\projects\litterbox-stc32g\diagnostics\WIFI001\main.c: MISSING SERIAL NUMBER IN 'TOOLS.I
+             -NI'
+    1          #include "tuya_link.h"
+    2          
+    3          sfr P2=0xA0; sfr P2M0=0x96; sfr P2M1=0x95;
+    4          sfr P3=0xB0; sfr P3M0=0xB2; sfr P3M1=0xB1;
+    5          sfr P5=0xC8; sfr P5M0=0xCA; sfr P5M1=0xC9;
+    6          sfr P_SW1=0xA2; sfr P_SW2=0xBA;
+    7          sfr IE=0xA8; sfr AUXR=0x8E; sfr TMOD=0x89; sfr TCON=0x88;
+    8          sfr TL1=0x8B; sfr TH1=0x8D; sfr TL0=0x8A; sfr TH0=0x8C;
+    9          sfr T4T3M=0xDD; sfr T3H=0xD4; sfr T3L=0xD5;
+   10          sfr S3CON=0xAC; sfr S3BUF=0xAD;
+   11          sfr SCON=0x98; sfr SBUF=0x99; sfr WDT_CONTR=0xC1; sfr RSTCFG=0xFF;
+   12          sbit MOTOR_BI=P2^0; sbit MOTOR_FI=P2^2;
+   13          sbit TR0=TCON^4; sbit TF0=TCON^5; sbit TR1=TCON^6;
+   14          sbit RI=SCON^0; sbit TI=SCON^1;
+   15          
+   16          #define FOSC 11059200UL
+   17          #define RELOAD(baud) ((unsigned int)(65536UL-FOSC/4UL/(baud)))
+   18          
+   19          /* 本产品的开发 PID，仅用于猫砂盆，WBR3 的模组固件和授权保持原样。 */
+   20          static const char far product_info[]="{\"p\":\"0m0kpxctdshaigt9\",\"v\":\"0.1.0\",\"m\":0}";
+   21          static unsigned char wifi_tx_sum, tried_fast, tx_fail, rx_age;
+   22          
+   23          static void wifi_uart_baud(unsigned int reload)
+   24          {
+   25   1          T4T3M=0x02; /* T3 停止，使用 1T 定时。 */
+   26   1          T3H=(unsigned char)(reload>>8);
+   27   1          T3L=(unsigned char)reload;
+   28   1          S3CON=0x50; /* 8 位，允许接收，Timer3 发生波特率。 */
+   29   1          T4T3M=0x0A;
+   30   1          frame_step=0;
+   31   1      }
+   32          
+   33          static void wifi_uart_send(unsigned char value)
+   34          {
+   35   1          unsigned int wait=50000U;
+   36   1          S3CON&=0xFD;
+   37   1          S3BUF=value;
+   38   1          while ((S3CON&2)==0 && --wait) { }
+   39   1          if (wait==0) tx_fail++;
+   40   1      }
+   41          
+   42          static void wifi_frame_data(unsigned char value)
+   43          {
+   44   1          wifi_tx_sum+=value;
+   45   1          wifi_uart_send(value);
+   46   1      }
+   47          
+   48          static void wifi_frame_start(unsigned char cmd, unsigned char length)
+   49          {
+   50   1          wifi_tx_sum=0;
+   51   1          wifi_frame_data(0x55);
+   52   1          wifi_frame_data(0xAA);
+   53   1          wifi_frame_data(3);
+   54   1          wifi_frame_data(cmd);
+   55   1          wifi_frame_data(0);
+C251 COMPILER V5.60.0,  main                                                               19/11/26  17:00:19  PAGE 2   
+
+   56   1          wifi_frame_data(length);
+   57   1      }
+   58          
+   59          static void wifi_frame_end(void) { wifi_uart_send(wifi_tx_sum); }
+   60          
+   61          static void wifi_product_info(void)
+   62          {
+   63   1          unsigned char i;
+   64   1          wifi_frame_start(1,sizeof(product_info)-1);
+   65   1          for (i=0;i<sizeof(product_info)-1;i++) wifi_frame_data(product_info[i]);
+   66   1          wifi_frame_end();
+   67   1      }
+   68          
+   69          static void debug_char(unsigned char c)
+   70          {
+   71   1          TI=0;
+   72   1          SBUF=c;
+   73   1          while (TI==0) { }
+   74   1      }
+   75          
+   76          static void debug_text(const char far *s)
+   77          {
+   78   1          while (*s) debug_char(*s++);
+   79   1      }
+   80          
+   81          static void debug_hex(unsigned char n)
+   82          {
+   83   1          n&=15;
+   84   1          debug_char(n<10 ? n+'0' : n+'A'-10);
+   85   1      }
+   86          
+   87          static void debug_field(unsigned char tag, unsigned char n)
+   88          {
+   89   1          debug_char(' ');
+   90   1          debug_char(tag);
+   91   1          debug_char('=');
+   92   1          debug_hex(n>>4);
+   93   1          debug_hex(n);
+   94   1      }
+   95          
+   96          static void debug_status(void)
+   97          {
+   98   1          debug_text("WIFI001");
+   99   1          debug_field('B', tried_fast);
+  100   1          debug_field('N', link_network);
+  101   1          debug_field('H', link_heartbeat);
+  102   1          debug_field('P', link_product);
+  103   1          debug_field('M', link_mode);
+  104   1          debug_field('S', link_net_reports);
+  105   1          debug_field('A', link_pair);
+  106   1          debug_field('Q', link_query);
+  107   1          debug_field('D', link_dp);
+  108   1          debug_field('E', link_errors);
+  109   1          debug_field('T', tx_fail);
+  110   1          debug_field('O', P2&5);
+  111   1          debug_text("\r\n");
+  112   1      }
+  113          
+  114          void main(void)
+  115          {
+  116   1          unsigned char value;
+  117   1          IE=0;
+  118   1          /* 联网台架保持两路电机指令低，全程没有置高路径。 */
+  119   1          MOTOR_BI=0; MOTOR_FI=0;
+  120   1          P2M1&=0xFA; P2M0|=5;
+  121   1          RSTCFG=(RSTCFG&0xBC)|0x41;
+C251 COMPILER V5.60.0,  main                                                               19/11/26  17:00:19  PAGE 3   
+
+  122   1      
+  123   1          /* UART1 在 CH340，WBR3 EN（P3.6）保持高阻，由模块内部上拉。 */
+  124   1          P_SW1&=0x3F;
+  125   1          P3|=3; P3M0=(P3M0&0xBC)|2; P3M1=(P3M1&0xFC)|0x41;
+  126   1          AUXR=0x40; TMOD=0; SCON=0x50;
+  127   1          TH1=(unsigned char)(RELOAD(115200UL)>>8); TL1=(unsigned char)RELOAD(115200UL);
+  128   1          TR1=1; TF0=0; TR0=1; /* Timer0 约 71ms 溢出，用于截断不完整帧。 */
+  129   1      
+  130   1          /* UART3 切到 P5.0 RX 与 P5.1 TX，生产板 Q2/Q3 完成电平转换。 */
+  131   1          P_SW2|=2;
+  132   1          P5|=3; P5M0=(P5M0&0xFC)|2; P5M1=(P5M1&0xFC)|1;
+  133   1          wifi_uart_baud(RELOAD(9600UL));
+  134   1          WDT_CONTR=0x33;
+  135   1          for (;;) {
+  136   2              WDT_CONTR=0x33;
+  137   2              if (S3CON&1) {
+  138   3                  value=S3BUF;
+  139   3                  S3CON&=0xFE;
+  140   3                  rx_age=0;
+  141   3                  wifi_feed(value);
+  142   3              }
+  143   2              if (TF0) {
+  144   3                  TF0=0;
+  145   3                  if (frame_step && ++rx_age>=2) {
+  146   4                      frame_step=0;
+  147   4                      link_errors++;
+  148   4                  }
+  149   3              }
+  150   2              if (RI) {
+  151   3                  value=SBUF;
+  152   3                  RI=0;
+  153   3                  if (value=='p') wifi_pair();
+  154   3                  else if (value=='b' && !link_heartbeat) {
+  155   4                      tried_fast^=1;
+  156   4                      wifi_uart_baud(tried_fast ? RELOAD(115200UL) : RELOAD(9600UL));
+  157   4                  } else if (value!='?') continue;
+  158   3                  debug_status();
+  159   3              }
+  160   2          }
+  161   1      }
+
+
+Module Information          Static   Overlayable
+------------------------------------------------
+  code size            =       855     ------
+  ecode size           =    ------     ------
+  data size            =        19     ------
+  idata size           =    ------     ------
+  pdata size           =    ------     ------
+  xdata size           =    ------     ------
+  xdata-const size     =    ------     ------
+  edata size           =    ------     ------
+  bit size             =    ------     ------
+  ebit size            =    ------     ------
+  bitaddressable size  =    ------     ------
+  ebitaddressable size =    ------     ------
+  far data size        =    ------     ------
+  huge data size       =    ------     ------
+  const size           =    ------     ------
+  hconst size          =        54     ------
+End of Module Information.
+
+
+C251 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

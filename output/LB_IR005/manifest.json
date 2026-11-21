@@ -1,0 +1,27 @@
+{
+  "bytes": 2072,
+  "start": "0xff0000",
+  "end": "0xff081a",
+  "sha256": "109cb5f4cf8da49df55925b7e6489aa49a33f31cafa7ee2658b0b7a1199c5b39",
+  "version": "LB_IR005",
+  "kind": "diagnostic",
+  "model": "STC32G8K64",
+  "source_sha256": "1c03e4cde41e17bc23e77640e3e623ff50976e4038d311f4962352eb136392a7",
+  "tool_sha256": "9a81e29ef7ef626bf7c18090a659ec77ac3129ecc32410c5b2c600e1e5c2b436",
+  "hardware_tested": false,
+  "purpose": "serial ISP download test only",
+  "original_functions_inherited": false,
+  "rollback_firmware_available": false,
+  "compiler_license": "official C251 evaluation 2KB",
+  "compiler_options": [
+    "OPTIMIZE(9,SIZE)",
+    "ROM(SMALL)"
+  ],
+  "trim_khz": 11059.2,
+  "extra_sources": {
+    "motor_control.h": "ea5ec5df02f34c5ef8ba37d532c1a3581c220c98dc89ee81cb5a940b1cc5f11b",
+    "ir_control.h": "23ec2d27200b0b5623f45bee394c39cb71c80f620c09cca7fe74679d791ae4ea",
+    "motor_ir_guard.h": "6dfc5b342674428318c4bbeb8b142e7e829d5c49ee8015a1d679a8259a77e073"
+  },
+  "purpose_detail": "3s key starts motor and IR with default high-pulse link; arm on first valid beam; block pauses and clear 10s resumes; manual off stops both"
+}

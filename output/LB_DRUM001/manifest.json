@@ -1,0 +1,24 @@
+{
+  "bytes": 13491,
+  "start": "0xff0000",
+  "end": "0xff35a0",
+  "sha256": "348d95fc12aa06378a0a94fa8bfd81f3bce8c99244ffd0ecd02c0e50d37d89a6",
+  "version": "LB_DRUM001",
+  "kind": "diagnostic",
+  "model": "STC32G8K64",
+  "source_sha256": "ea7253ffe2ae2b8873dbcbe00000983a136f302422973b43447542d05f4a0dfa",
+  "tool_sha256": "3c5e72f1d37eec437b4261e58a9b5ee12adec6c1dd08ef71c8964652b812c7e9",
+  "compiler_cache_sha256": "34db3ff3888bc08bfdf417e47d8703d49564658e4bb2c5bf15c6a9b4af332521",
+  "extra_sources": {
+    "drum_board.h": "d3b641914f91f6d56e4f321c1316a09da55cd4513e99478ae70c28e57aea97c8",
+    "drum_cycle.h": "4f24f0c3d21f5f076ae9ec94cd77580be6568ab663db4bcf5872350c99a7cf82",
+    "ir_beam_state.h": "acbd6ef6d720cc11eeb30be1c553cc5376f346e3182e5fe8b91be84b97722624",
+    "ir_carrier_state.h": "f6e4a182a50c8509263d152a710aad56a7fb16aa483f5453d6408b500f10a285",
+    "motor_control.h": "3020ec37aa36ebf550c54502e9c7e86023a59009b9f85ea9793c498a536c4614",
+    "tuya_link.h": "7895ab4fbadbf10142e7e77e77ecb827ac39f33164b48fadfd9a13eb08a283c5",
+    "wifi_uart.h": "1f7d7deb8a2fee894d0042171ff0e33bc25b46e3854644ccf97234aab979f3d7"
+  },
+  "trim_khz": 11059.2,
+  "hardware_tested": false,
+  "purpose": "APP004-based drum cycle, bench only before commissioning"
+}

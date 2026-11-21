@@ -1,0 +1,29 @@
+{
+  "bytes": 1931,
+  "start": "0xff0000",
+  "end": "0xff0792",
+  "sha256": "11000f106036daeeed5211c0b0f7cb490431c4415cc7e0935ca45da0ce711cf7",
+  "version": "LB_IR008",
+  "kind": "diagnostic",
+  "model": "STC32G8K64",
+  "source_sha256": "1e4c62b1aa5ea6f766184b3bb16a66b602db05569df3499de5eae64d56bfa1a7",
+  "tool_sha256": "8007775e989b3f1d6854b2ec697e22c193e139be5182472dab111933a52b1301",
+  "hardware_tested": false,
+  "purpose": "serial ISP download test only",
+  "original_functions_inherited": false,
+  "rollback_firmware_available": false,
+  "compiler_license": "official C251 evaluation 2KB",
+  "compiler_options": [
+    "OPTIMIZE(9,SIZE)",
+    "ROM(SMALL)"
+  ],
+  "trim_khz": 11059.2,
+  "extra_sources": {
+    "motor_control.h": "ea5ec5df02f34c5ef8ba37d532c1a3581c220c98dc89ee81cb5a940b1cc5f11b",
+    "motor_ir_guard.h": "6dfc5b342674428318c4bbeb8b142e7e829d5c49ee8015a1d679a8259a77e073",
+    "array_probe_state.h": "047a7d660da397d55b2018da13379af2c20afa4dc5c67f173ad97ada24538186",
+    "ir_carrier_state.h": "e4aa8798f3d7a5b5bcb307d43bb64ee9ea183c5d398c031c7d31c31855d3e33a"
+  },
+  "diagnostic_scope": "array raw ADC and bounded pin probes; old single IR link temporarily inactive; motor key and stop retained",
+  "purpose_detail": "three channel raw ADC14/0/1 with 38.13kHz software carrier on P0.4/P5.2/P5.3; 1ms burst per 10ms window; sync and rotate modes; no uncalibrated IR stop decisions"
+}

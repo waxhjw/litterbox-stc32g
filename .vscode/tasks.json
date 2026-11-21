@@ -1,0 +1,810 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "猫砂盆 DRUM008: 构建暂停继续修复版",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "构建DRUM008", "--why", "生成暂停保留进度的HEX", "run", "--", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Profile", "DRUM008", "-Action", "build"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 DRUM008: 下载暂停继续修复版（电机拔下）",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "下载DRUM008", "--why", "写入暂停继续修复版并保留硬件选项", "run", "--", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Profile", "DRUM008", "-Action", "flash"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 DRUM008: 同摆位对照红外（电机拔下）",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "对照DRUM008红外", "--why", "核对两组红外时序修复在新版本继续生效", "run", "--", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Profile", "DRUM008", "-Action", "optical-check", "-Seconds", "8"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 DRUM008: 监听App暂停和继续（台架）",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "监听DRUM008", "--why", "核对开始、暂停保留进度、继续和驱动输出", "run", "--", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Profile", "DRUM008", "-Action", "arm-watch", "-Seconds", "240"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 DRUM007: 构建红外时序修复版",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "构建DRUM007", "--why", "生成红外时序修复版HEX", "run", "--", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Profile", "DRUM007", "-Action", "build"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 DRUM007: 下载红外时序修复版（电机拔下）",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "下载DRUM007", "--why", "写入修复版并保留硬件选项", "run", "--", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Profile", "DRUM007", "-Action", "flash"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 DRUM007: 同摆位对照红外（电机拔下）",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "对照红外时序", "--why", "比较仅三路发射与合并单路发射的通光状态", "run", "--", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Profile", "DRUM007", "-Action", "optical-check", "-Seconds", "8"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 DRUM007: 等待一次App清理并监听（台架）",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "监听DRUM007", "--why", "核对开始、保护等待、暂停和输出", "run", "--", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Profile", "DRUM007", "-Action", "arm-watch", "-Seconds", "240"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 DRUM006: 构建三路遮挡计数修复版",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "构建DRUM006", "--why", "生成三路计数修复版HEX", "run", "--", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Profile", "DRUM006", "-Action", "build"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 DRUM006: 下载计数修复版（电机拔下）",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "下载DRUM006", "--why", "写入修复版并保留硬件选项", "run", "--", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Profile", "DRUM006", "-Action", "flash"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 DRUM006: 等待一次App清理并监听（台架）",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "监听DRUM006", "--why", "核对三路遮挡位、单路通光和驱动输出", "run", "--", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Profile", "DRUM006", "-Action", "arm-watch", "-Seconds", "110"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 DRUM005: 构建两轮正反转与联动保护版",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "构建DRUM005", "--why", "生成三组保护联动及两轮正反转镜像", "run", "--", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Profile", "DRUM005", "-Action", "build"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 DRUM005: 回放三组保护与10秒恢复",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "回放DRUM005联动保护", "--why", "验证各组触发、统一计时、换向和时窗", "run", "--", "python", "tests/drum_interlock_host_test.py", "--profile", "DRUM005"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 DRUM005: 下载联动保护版（电机拔下）",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "下载DRUM005", "--why", "先在电机断开时验证启动默认关闭与光路", "run", "--", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Profile", "DRUM005", "-Action", "flash"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 DRUM005: 等待一次App清理并监听（固定空载电机）",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "监听DRUM005试转", "--why", "读取各组触发、恢复计时和四段电机输出", "run", "--", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Profile", "DRUM005", "-Action", "arm-watch", "-Seconds", "110"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 DRUM004: 构建空载两轮正反转版",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "构建DRUM004", "--why", "生成空载两轮正反转台架镜像", "run", "--", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Profile", "DRUM004", "-Action", "build"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 DRUM004: 下载空载试转版（电机拔下）",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "下载DRUM004", "--why", "先在电机断开时验证启动默认关闭", "run", "--", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Profile", "DRUM004", "-Action", "flash"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 DRUM004: 等待一次App清理并监听（固定空载电机）",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "监听DRUM004试转", "--why", "读取四段电机输出和停机结果", "run", "--", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Profile", "DRUM004", "-Action", "arm-watch", "-Seconds", "110"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 DRUM003: 构建滚筒候选固件",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "构建DRUM003", "--why", "生成滚筒固件及校验清单", "run", "--", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Profile", "DRUM003", "-Action", "build"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 DRUM003: 离线仿真与回归",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "回归DRUM003", "--why", "测试两路霍尔归位、虚拟位置、Wi-Fi报文和停机恢复", "run", "--", "python", "tests/drum_host_test.py"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 DRUM003: 下载候选固件（电机拔下）",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "下载DRUM003", "--why", "验证任一路霍尔有效即可确认集便仓归位", "run", "--", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Profile", "DRUM003", "-Action", "flash"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 DRUM003: 监听集便仓和滚筒状态",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "监听DRUM003", "--why", "核对霍尔、集便仓归位和电机输出", "run", "--", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Profile", "DRUM003", "-Action", "watch"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 DRUM002: 下载候选固件（电机拔下）",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "下载DRUM002", "--why", "台架核对启动与联网，保留硬件选项", "run", "--", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Profile", "DRUM002", "-Action", "flash"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 DRUM002: 监听滚筒状态与故障",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "监听DRUM002", "--why", "区分滚筒位置、集便仓状态和电机输出", "run", "--", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Profile", "DRUM002", "-Action", "watch"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 APP005: 构建手动铲粪反馈修正版",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "构建APP005", "--why", "编译手动铲粪接受反馈和工作状态上报", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Profile", "APP005", "-Action", "build"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 APP005: 下载手动铲粪反馈修正版",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "下载APP005", "--why", "用CH340写入程序区并保留硬件选项", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Profile", "APP005", "-Action", "flash"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 APP005: 监听手动铲粪和实际工作状态",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "监听APP005", "--why", "核对请求确认、主板状态和实际输出", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Profile", "APP005", "-Action", "watch"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 APP004: 构建独立工作状态回报版",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "构建APP004", "--why", "编译独立的控制和工作状态报文", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Profile", "APP004", "-Action", "build"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 APP004: 下载独立工作状态回报版",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "下载APP004", "--why", "用CH340写入程序区并保留硬件选项", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Profile", "APP004", "-Action", "flash"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 APP004: 监听App和实际工作状态",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "监听APP004", "--why", "核对App状态、手动指令取值和电机输出", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Profile", "APP004", "-Action", "watch"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 APP003: 构建工作状态上报版",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "构建APP003", "--why", "编译DP22工作状态上报", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Profile", "APP003", "-Action", "build"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 APP003: 下载工作状态上报版",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "下载APP003", "--why", "用CH340写入程序区并保留硬件选项", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Profile", "APP003", "-Action", "flash"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 APP003: 监听App和实际工作状态",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "监听APP003", "--why", "核对App状态、控制计时和电机输出", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Profile", "APP003", "-Action", "watch"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 APP002: 构建红外节拍修正版",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "构建APP002", "--why", "编译红外节拍修正版及完整App保护", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Profile", "APP002", "-Action", "build"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 APP002: 下载红外节拍修正版",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "下载APP002", "--why", "用CH340写入程序区并保留硬件选项", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Profile", "APP002", "-Action", "flash"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 APP002: 监听App和保护状态",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "监听APP002", "--why", "核对控制时序、App命令和实际输出", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Profile", "APP002", "-Action", "watch"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 APP001: 构建 App 与本地保护合版",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "构建APP001", "--why", "离线编译联网和传感器保护", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Action", "build"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 APP001: 下载合版台架固件",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "下载APP001", "--why", "用CH340写入程序区并保留硬件选项", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Action", "flash"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 APP001: 监听 App 与本地保护状态",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "监听APP001", "--why", "同时读取命令、执行输出和保护信号", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Action", "watch"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 WIFI002: 构建 App 指令联调版",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "构建WIFI002", "--why", "编译 DP5 暂停和继续验证", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/wifi001.ps1", "-Profile", "WIFI002", "-Action", "build"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 WIFI002: 下载 App 指令联调版",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "下载WIFI002", "--why", "用 CH340 安装 App 台架版", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/wifi001.ps1", "-Profile", "WIFI002", "-Action", "flash"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 WIFI002: 监听 App 指令和状态回报",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "监听WIFI002", "--why", "核对 App 下发、暂停和主控回报", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/wifi001.ps1", "-Profile", "WIFI002", "-Action", "watch"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 WIFI001: 构建 WBR3 联调版",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "构建WIFI001", "--why", "生成独立 Wi-Fi 联调固件", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/wifi001.ps1", "-Action", "build"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 WIFI001: 下载 WBR3 联调版",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "下载WIFI001", "--why", "通过 CH340 写入主控联调版", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/wifi001.ps1", "-Action", "flash"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 WIFI001: 监听配网状态",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "监听WIFI001", "--why", "核对 WBR3 握手、配网及云端状态", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/wifi001.ps1", "-Action", "watch"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 WIFI001: 重新配网（清除模组网络配置）",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "重新配网WIFI001", "--why", "人工提交一次涂鸦网络重置", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/wifi001.ps1", "-Action", "pair"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR017: 构建雷达停机验证",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "构建IR017", "--why", "编译雷达、霍尔和红外联动", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir014.ps1", "-Profile", "IR017", "-Action", "build"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR017: 下载雷达停机验证",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "下载IR017", "--why", "以38400下载雷达版并保留硬件选项", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir014.ps1", "-Profile", "IR017", "-Action", "flash"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR017: 监听雷达与电机输出",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "监听IR017状态", "--why", "同步核对雷达、霍尔、红外和运行输出", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir014.ps1", "-Profile", "IR017", "-Action", "watch-with-hall"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR016: 构建霍尔启动联动",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "构建IR016", "--why", "编译霍尔启动条件和红外联动", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir014.ps1", "-Profile", "IR016", "-Action", "build"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR016: 下载霍尔启动联动",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "下载IR016", "--why", "以38400下载并保留硬件选项", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir014.ps1", "-Profile", "IR016", "-Action", "flash"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR016: 读取两路霍尔",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "读取IR016霍尔", "--why", "核对磁铁对两路输入的影响", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir014.ps1", "-Profile", "IR016", "-Action", "hall"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR016: 监听霍尔、电机与红外状态",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "监听IR016状态", "--why", "同步核对霍尔电平、运行输出和红外闭锁", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir014.ps1", "-Profile", "IR016", "-Action", "watch-with-hall"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR015: 构建霍尔诊断",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "构建IR015", "--why", "验证霍尔读取和串口命令过滤", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir014.ps1", "-Profile", "IR015", "-Action", "build"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR015: 下载霍尔诊断",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "下载IR015", "--why", "先验证应用串口静默再等待上电", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir014.ps1", "-Profile", "IR015", "-Action", "flash"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR015: 监听两路霍尔",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "监听IR015霍尔", "--why", "记录磁铁靠近和移开时的两路电平", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir014.ps1", "-Profile", "IR015", "-Action", "hall-watch"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR014: 构建霍尔只读诊断",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "构建IR014", "--why", "在红外联动版增加两路霍尔读数", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir014.ps1", "-Action", "build"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR014: 下载霍尔只读诊断",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "下载IR014", "--why", "按无硬件选项写流程下载霍尔诊断", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir014.ps1", "-Action", "flash"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR014: 读取两路霍尔",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "读取IR014霍尔", "--why", "确认两路传感器原始高低电平", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir014.ps1", "-Action", "hall"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR014: 监听霍尔变化",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "监听IR014霍尔", "--why", "记录磁铁靠近和移开时的两路变化", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir014.ps1", "-Action", "hall-watch"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR013: 构建三路红外联动",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "构建IR013", "--why", "编译三路遮挡停机和定时恢复", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir013.ps1", "-Action", "build"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR013: 检查镜像与CH340",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "检查IR013", "--why", "核对固件校验值与串口枚举", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir013.ps1", "-Action", "check"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR013: 下载三路红外联动",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "下载IR013", "--why", "写入三路联动台架固件并保持硬件选项", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir013.ps1", "-Action", "flash"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR013: 查询联动状态",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "查询IR013", "--why", "读取运行请求、电机输出和三路遮挡位", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir013.ps1", "-Action", "status"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR013: 监听联动状态变化",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "监听IR013", "--why", "采集遮挡、恢复和手动取消的串口证据", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir013.ps1", "-Action", "watch"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR013: 停止电机请求与载波",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "停止IR013", "--why", "取消运行和恢复请求并核对停机", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir013.ps1", "-Action", "stop"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR006: 构建三路原始采样诊断",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "构建IR006", "--why", "无需芯片型号先采集三路原始值", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir006.ps1", "-Action", "build"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR006: 检查三路采样产物与CH340",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "检查IR006", "--why", "核对冻结源码镜像和串口枚举", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir006.ps1", "-Action", "check"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR006: 下载已确认的三路采样诊断",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "下载IR006", "--why", "按已确认诊断范围操作", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir006.ps1", "-Action", "flash"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR006: 查询三路采样版与电机状态",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "查询IR006", "--why", "确认采样版本而不是旧单路程序", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir006.ps1", "-Action", "status"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR006: 只采集三路原始输入约20秒",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "采集三路原始值", "--why", "不驱动发射脚记录输入基线", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir006.ps1", "-Action", "sample", "-Count", "100"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR006: 第1路低电平限时探测",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "探测第1路低电平", "--why", "记录接收响应并自动释放引脚", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir006.ps1", "-Action", "probe", "-Channel", "1", "-Level", "low", "-Count", "10"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR006: 第1路高电平限时探测",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "探测第1路高电平", "--why", "比较同路高低控制响应", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir006.ps1", "-Action", "probe", "-Channel", "1", "-Level", "high", "-Count", "10"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR006: 第2路低电平限时探测",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "探测第2路低电平", "--why", "逐路核对光电对应关系", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir006.ps1", "-Action", "probe", "-Channel", "2", "-Level", "low", "-Count", "10"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR006: 第2路高电平限时探测",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "探测第2路高电平", "--why", "比较同路高低控制响应", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir006.ps1", "-Action", "probe", "-Channel", "2", "-Level", "high", "-Count", "10"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR006: 第3路低电平限时探测",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "探测第3路低电平", "--why", "逐路核对光电对应关系", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir006.ps1", "-Action", "probe", "-Channel", "3", "-Level", "low", "-Count", "10"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR006: 第3路高电平限时探测",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "探测第3路高电平", "--why", "比较同路高低控制响应", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir006.ps1", "-Action", "probe", "-Channel", "3", "-Level", "high", "-Count", "10"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR006: 停止电机并取消引脚探测",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "停止IR006诊断", "--why", "取消请求并释放三路发射控制脚", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir006.ps1", "-Action", "stop"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR007: 构建三路上拉采样诊断",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "构建IR007", "--why", "VDD正常仍读0改用内部上拉验证开漏", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir007.ps1", "-Action", "build"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR007: 检查三路上拉采样产物与CH340",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "检查IR007", "--why", "核对冻结源码镜像和串口枚举", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir007.ps1", "-Action", "check"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR007: 下载三路内部上拉采样诊断",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "下载IR007", "--why", "沿用已确认的无选项写诊断路径", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir007.ps1", "-Action", "flash"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR007: 查询三路上拉采样版与电机状态",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "查询IR007", "--why", "确认上拉采样版本而不是旧程序", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir007.ps1", "-Action", "status"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR007: 只采集三路上拉基线约20秒",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "采集三路上拉基线", "--why", "记录开漏假设下的输入电平", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir007.ps1", "-Action", "sample", "-Count", "100"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR007: 第1路低电平限时探测",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "探测第1路低电平", "--why", "上拉下记录接收响应并自动释放", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir007.ps1", "-Action", "probe", "-Channel", "1", "-Level", "low", "-Count", "10"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR007: 第1路高电平限时探测",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "探测第1路高电平", "--why", "上拉下比较同路高低控制响应", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir007.ps1", "-Action", "probe", "-Channel", "1", "-Level", "high", "-Count", "10"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR007: 第2路低电平限时探测",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "探测第2路低电平", "--why", "上拉下逐路核对光电对应关系", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir007.ps1", "-Action", "probe", "-Channel", "2", "-Level", "low", "-Count", "10"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR007: 第2路高电平限时探测",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "探测第2路高电平", "--why", "上拉下比较同路高低控制响应", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir007.ps1", "-Action", "probe", "-Channel", "2", "-Level", "high", "-Count", "10"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR007: 第3路低电平限时探测",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "探测第3路低电平", "--why", "上拉下逐路核对光电对应关系", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir007.ps1", "-Action", "probe", "-Channel", "3", "-Level", "low", "-Count", "10"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR007: 第3路高电平限时探测",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "探测第3路高电平", "--why", "上拉下比较同路高低控制响应", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir007.ps1", "-Action", "probe", "-Channel", "3", "-Level", "high", "-Count", "10"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR007: 停止电机并取消引脚探测",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "停止IR007诊断", "--why", "取消请求并释放三路发射控制脚", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir007.ps1", "-Action", "stop"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR004: 构建长按启停与红外自动联动",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "构建IR004", "--why", "未接红外也能启动的电机测试", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir004.ps1", "-Action", "build"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR004: 检查固件与CH340（不打开串口）",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "检查IR004", "--why", "核对冻结源码与HEX", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir004.ps1", "-Action", "check"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR004: 下载长按启停测试固件（不写硬件选项）",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "下载IR004", "--why", "使用CH340下载本轮测试固件", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir004.ps1", "-Action", "flash"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR004: 查询电机请求与红外保护状态",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "查询IR004", "--why", "区分实际输出请求与光路识别", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir004.ps1", "-Action", "status"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR004: 关机状态单独测试38kHz红外10秒",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "采集IR004红外", "--why", "保留独立红外诊断不启动电机", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir004.ps1", "-Action", "test38"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR004: 关机并关闭红外发射",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "关闭IR004", "--why", "停止用户请求并关闭红外", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir004.ps1", "-Action", "off"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR004: 关机时选择下次启动低脉冲对射",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "选择IR004低脉冲", "--why", "设置下次长按启动的接收极性", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir004.ps1", "-Action", "link-low"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR004: 监视启停与10秒恢复60秒",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "监视IR004", "--why", "只查询用户按键与光路状态", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir004.ps1", "-Action", "watch"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR004: 停止电机并取消自动恢复",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "停止IR004", "--why", "取消恢复请求并关闭发射", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir004.ps1", "-Action", "stop"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR005: 构建默认高脉冲联动固件",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "构建IR005", "--why", "默认高脉冲判据的红外联动测试", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir005.ps1", "-Action", "build"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR005: 检查固件与CH340（不打开串口）",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "检查IR005", "--why", "核对冻结源码与HEX", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir005.ps1", "-Action", "check"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR005: 下载默认高脉冲联动固件（不写硬件选项）",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "下载IR005", "--why", "使用CH340下载本轮测试固件", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir005.ps1", "-Action", "flash"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR005: 查询电机请求与红外保护状态",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "查询IR005", "--why", "区分实际输出请求与光路识别", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir005.ps1", "-Action", "status"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR005: 关机状态单独测试38kHz红外10秒",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "采集IR005红外", "--why", "保留独立红外诊断不启动电机", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir005.ps1", "-Action", "test38"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR005: 关机并关闭红外发射",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "关闭IR005", "--why", "停止用户请求并关闭红外", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir005.ps1", "-Action", "off"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR005: 关机时选择下次启动低脉冲对射",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "选择IR005低脉冲", "--why", "设置下次长按启动的接收极性", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir005.ps1", "-Action", "link-low"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR005: 监视启停与10秒恢复60秒",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "监视IR005", "--why", "只查询用户按键与光路状态", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir005.ps1", "-Action", "watch"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR005: 停止电机并取消自动恢复",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "停止IR005", "--why", "取消恢复请求并关闭发射", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir005.ps1", "-Action", "stop"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR003: 构建对射停机与10秒恢复固件",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "构建IR002", "--why", "保留长按电机功能并验证红外", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir.ps1", "-Action", "build"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR003: 检查红外联动固件（不打开串口）",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "检查IR002", "--why", "核对冻结源码与HEX", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir.ps1", "-Action", "check"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR003: 下载联动固件（不发送硬件选项写命令）",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "下载IR002", "--why", "按厂商无选项写入流程验证红外", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir.ps1", "-Action", "flash"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR003: 查询光路请求与实际停机状态",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "查询IR002", "--why", "核对版本输入与运行配置", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir.ps1", "-Action", "status"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR003: 测试38kHz短脉冲并采集接收数据",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "验证IR002红外响应", "--why", "比较关闭正对遮挡的原始信号", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir.ps1", "-Action", "test38"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR003: 关闭红外发射并禁止电机输出",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "关闭红外发射", "--why", "确认固件关闭发射模式", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir.ps1", "-Action", "off"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR003: 启用对射联动（低脉冲实测确认后）",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "启用IR003联动", "--why", "使用已确认的接收低脉冲模式", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir.ps1", "-Action", "link-low"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR003: 监视遮挡停机和恢复60秒",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "监视IR003联动", "--why", "观察用户按键和光路变化不发送启动命令", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir.ps1", "-Action", "watch"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 IR003: 停止电机并关闭红外",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "停止IR003", "--why", "取消运行请求并关闭发射", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/ir.ps1", "-Action", "stop"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 MOTOR003: 构建任意键长按3秒启停电机测试版",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "构建电机按键测试001", "--why", "长按CLEAN启停的独立诊断固件", "powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/tools/motor.ps1", "-Action", "build"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 MOTOR003: 检查电机测试固件（不打开串口）",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "核对电机测试001", "--why", "验证型号源码HEX和时钟参数", "powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/tools/motor.ps1", "-Action", "check"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 MOTOR003: 烧录电机测试版（覆盖原程序）",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "烧录电机测试001", "--why", "按已授权范围用CH340下载诊断程序", "powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/tools/motor.ps1", "-Action", "flash"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 MOTOR003: 查询按键与电机状态（不启动）",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "查询电机测试001", "--why", "核对新固件启动与CLEAN键电平", "powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/tools/motor.ps1", "-Action", "status"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 MOTOR003: 串口停止电机",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "停止电机测试001", "--why", "发送停止命令并核对固件状态", "powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/tools/motor.ps1", "-Action", "stop"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 CH340: 检查环境与串口（不打开串口）",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "检查CH340烧录环境", "--why", "核对工具和USB串口身份", "powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/tools/task.ps1", "-Action", "doctor"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 CH340: 接收原程序日志20秒（不发送）",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "接收猫砂盆原程序日志", "--why", "观察运行输出并保留原程序", "powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/tools/task.ps1", "-Action", "capture"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 CH340: 只识别芯片（不擦写，需冷启动）",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "识别猫砂盆STC主控", "--why", "验证串口ISP身份应答不下载固件", "powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/tools/task.ps1", "-Action", "probe"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 ISP_TEST001: 构建烧录验证固件",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "构建猫砂盆烧录诊断001", "--why", "生成独立下载验证固件", "powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/tools/diagnostic.ps1", "-Action", "build"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 ISP_TEST001: 检查烧录文件（离线）",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "检查猫砂盆烧录诊断001", "--why", "核对固件格式及校验值", "powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/tools/diagnostic.ps1", "-Action", "check"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 ISP_TEST001: 烧录诊断版（覆盖原程序）",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "烧录猫砂盆诊断001", "--why", "验证串口下载链路", "powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/tools/diagnostic.ps1", "-Action", "flash"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 STC32G ENV001: 检查环境与串口（不连接主板）",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "检查猫砂盆环境", "--why", "核对工具和串口枚举", "powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/tools/task.ps1", "-Action", "doctor"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 STC32G ENV001: 构建环境验证（禁止烧录）",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "验证猫砂盆编译环境", "--why", "执行C251编译链接与HEX转换", "powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/tools/task.ps1", "-Action", "validate"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": [],
+      "group": {"kind": "build", "isDefault": true}
+    },
+    {
+      "label": "猫砂盆 STC32G: 构建产品（待导入完整源码）",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "构建猫砂盆产品", "--why", "按完整源码工程生成固件", "powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/tools/task.ps1", "-Action", "build"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 STC32G: 烧录前检查（不连接主板）",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "核验猫砂盆烧录文件", "--why", "离线检查型号格式和指纹", "powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/tools/task.ps1", "-Action", "flash-check"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 STC32G: 烧录产品（会擦写主板）",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "烧录猫砂盆产品", "--why", "经校验后通过配置的USB串口下载", "powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/tools/task.ps1", "-Action", "flash"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 STC32G: 构建并烧录产品",
+      "dependsOrder": "sequence",
+      "dependsOn": ["猫砂盆 STC32G: 构建产品（待导入完整源码）", "猫砂盆 STC32G: 烧录产品（会擦写主板）"],
+      "problemMatcher": []
+    }
+  ]
+}

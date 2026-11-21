@@ -1,0 +1,287 @@
+L251 LINKER/LOCATER V4.66.93.0                                                          11/10/2026  15:42:53  PAGE 1
+
+
+L251 LINKER/LOCATER V4.66.93.0, INVOKED BY:
+D:\PROJECTS\LITTERBOX-STC32G\.TOOLS\KEIL-C251\C251\BIN\L251.EXE MAIN.OBJ TO LB_IR001 PRINT (LB_IR001.map) 
+
+
+CPU MODE:     251 SOURCE MODE
+INTR FRAME:   4 BYTES SAVED ON INTERRUPT
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  MAIN.OBJ (main)
+         COMMENT TYPE 0: C251 V5.60.0
+  D:\PROJECTS\LITTERBOX-STC32G\.TOOLS\KEIL-C251\C251\LIB\C2SS.LIB (?C_START)
+         COMMENT TYPE 0: A251 V4.69.6.0
+
+
+ACTIVE MEMORY CLASSES OF MODULE:  LB_IR001 (main)
+
+BASE        START       END         USED      MEMORY CLASS
+==========================================================
+000000H     FF0000H     FFFFFFH     000055H   HCONST
+FF0000H     FF0000H     FFFFFFH     000617H   CODE
+000000H     000000H     00007FH     000021H   DATA
+000000H     000000H     00FFFFH     000100H   EDATA
+
+
+MEMORY MAP OF MODULE:  LB_IR001 (main)
+
+
+START     STOP      LENGTH    ALIGN  RELOC    MEMORY CLASS   SEGMENT NAME
+=========================================================================
+000000H   000007H   000008H   ---    AT..     DATA           "REG BANK 0"
+000008H   00001EH   000017H   BYTE   UNIT     DATA           ?DT?MAIN
+00001FH   000020H   000002H   BYTE   UNIT     DATA           _DATA_GROUP_
+000021H   000120H   000100H   BYTE   UNIT     EDATA          ?STACK
+000121H   FEFFFFH   FEFEDFH   ---    ---      **GAP**
+FF0000H   FF0002H   000003H   ---    OFFS..   CODE           ?CO?start251?4
+FF0003H   FF0007H   000005H   BYTE   INSEG    CODE           ?PR?MOTOR_STOP?MAIN
+FF0008H   FF000AH   000003H   ---    ---      **GAP**
+FF000BH   FF000DH   000003H   ---    OFFS..   CODE           ?PR?IV?1
+FF000EH   FF0151H   000144H   BYTE   INSEG    CODE           ?PR?MAIN?MAIN
+FF0152H   FF0250H   0000FFH   BYTE   INSEG    CODE           ?PR?CONFIGURE_IR?MAIN
+FF0251H   FF0316H   0000C6H   BYTE   INSEG    CODE           ?PR?MOTOR_CONTROL_TICK?MAIN
+FF0317H   FF03A8H   000092H   BYTE   INSEG    CODE           ?PR?STATUS?MAIN
+FF03A9H   FF0435H   00008DH   BYTE   INSEG    CODE           ?PR?IR_CONTROL_TICK?MAIN
+FF0436H   FF048FH   00005AH   BYTE   INSEG    CODE           ?PR?REPORT_IR?MAIN
+FF0490H   FF04DFH   000050H   BYTE   INSEG    CODE           ?PR?TIMER0_ISR?MAIN
+FF04E0H   FF050AH   00002BH   BYTE   INSEG    CODE           ?PR?IR_CONTROL_COMMAND?MAIN
+FF050BH   FF0532H   000028H   BYTE   INSEG    CODE           ?PR?MOTOR_CONTROL_INIT?MAIN
+FF0533H   FF0558H   000026H   BYTE   INSEG    CODE           ?PR?HEX_WORD?MAIN
+FF0559H   FF0578H   000020H   BYTE   INSEG    CODE           ?PR?READ_PRESSED_KEYS?MAIN
+FF0579H   FF0597H   00001FH   BYTE   INSEG    CODE           ?PR?HEX_DIGIT?MAIN
+FF0598H   FF05B4H   00001DH   BYTE   INSEG    CODE           ?PR?IR_CONTROL_INIT?MAIN
+FF05B5H   FF05D0H   00001CH   BYTE   INSEG    CODE           ?PR?MOTOR_CONTROL_STOP?MAIN
+FF05D1H   FF05E6H   000016H   BYTE   INSEG    CODE           ?PR?UART_TEXT?MAIN
+FF05E7H   FF05F9H   000013H   BYTE   UNIT     CODE           ?C_C51STARTUP
+FF05FAH   FF05FCH   000003H   BYTE   UNIT     CODE           ?C_C51STARTUP?3
+FF05FDH   FF060DH   000011H   BYTE   INSEG    CODE           ?PR?IR_CONTROL_CLEAR_STATS?MAIN
+FF060EH   FF0619H   00000CH   BYTE   INSEG    CODE           ?PR?UART_CHAR?MAIN
+FF061AH   FF066EH   000055H   BYTE   UNIT     HCONST         ?HC?MAIN
+
+
+
+OVERLAY MAP OF MODULE:   LB_IR001 (main)
+
+
+L251 LINKER/LOCATER V4.66.93.0                                                        11/10/2026  15:42:53  PAGE 2
+
+
+FUNCTION/MODULE                   BIT_GROUP   DATA_GROUP 
+--> CALLED FUNCTION/MODULE       START  STOP  START  STOP
+=========================================================
+timer0_isr/main                  ----- -----  ----- -----
+  +--> ir_control_tick/main
+  +--> read_pressed_keys/main
+  +--> motor_control_tick/main
+
+ir_control_tick/main             ----- -----  ----- -----
+
+read_pressed_keys/main           ----- -----  ----- -----
+
+motor_control_tick/main          ----- -----  ----- -----
+
+*** NEW ROOT *******************
+
+?C_C51STARTUP                    ----- -----  ----- -----
+
+*** NEW ROOT *******************
+
+?C_C51STARTUP?3                  ----- -----  ----- -----
+  +--> main/main
+
+main/main                        ----- -----  ----- -----
+  +--> motor_stop/main
+  +--> motor_control_init/main
+  +--> ir_control_init/main
+  +--> uart_text/main
+  +--> status/main
+  +--> report_ir/main
+  +--> motor_control_stop/main
+  +--> configure_ir/main
+
+motor_stop/main                  ----- -----  ----- -----
+
+motor_control_init/main          ----- -----  ----- -----
+
+ir_control_init/main             ----- -----  ----- -----
+  +--> ir_control_clear_stats/main
+
+ir_control_clear_stats/main      ----- -----  ----- -----
+
+uart_text/main                   ----- -----  ----- -----
+  +--> uart_char/main
+
+uart_char/main                   ----- -----  ----- -----
+
+status/main                      ----- -----  ----- -----
+  +--> uart_text/main
+  +--> uart_char/main
+  +--> hex_word/main
+
+hex_word/main                    ----- -----  ----- -----
+  +--> hex_digit/main
+
+hex_digit/main                   ----- -----  ----- -----
+  +--> uart_char/main
+
+report_ir/main                   ----- -----  001FH 0020H
+  +--> ir_control_clear_stats/main
+  +--> uart_text/main
+  +--> hex_word/main
+
+motor_control_stop/main          ----- -----  ----- -----
+
+L251 LINKER/LOCATER V4.66.93.0                                                        11/10/2026  15:42:53  PAGE 3
+
+
+configure_ir/main                ----- -----  ----- -----
+  +--> ir_control_command/main
+
+ir_control_command/main          ----- -----  ----- -----
+
+
+
+PUBLIC SYMBOLS OF MODULE:  LB_IR001 (main)
+
+
+      VALUE       CLASS    TYPE      PUBLIC SYMBOL NAME
+      =================================================
+      000000FFH   NUMBER   ---       ?C?CODESEG
+      00FF0000H   CODE     ---       ?C?STARTUP
+      00000001H   NUMBER   ---       ?C?XDATASEG
+      00FF0000H   CODE     ---       ?C_STARTUP
+*SFR* 0000008EH   DATA     BYTE      AUXR
+      00FF0152H   CODE     ---       configure_ir
+      00000008H   DATA     ---       control
+      0000001EH   DATA     BYTE      divider
+      00000011H   DATA     BYTE      heartbeat
+      00FF0579H   CODE     ---       hex_digit
+      00FF0533H   CODE     ---       hex_word
+*SFR* 000000A8H   DATA     BYTE      IE
+      00000012H   DATA     ---       ir
+*SFR* 00000090H.4 DATA     BIT       IR_RX
+*SFR* 00000090H.7 DATA     BIT       IR_TX
+*SFR* 000000A0H.6 DATA     BIT       KEY_SW1
+*SFR* 00000080H.2 DATA     BIT       KEY_SW2
+*SFR* 000000A0H.7 DATA     BIT       KEY_SW3
+      00FF000EH   CODE     ---       main
+*SFR* 000000A0H.0 DATA     BIT       MOTOR_BI
+*SFR* 000000A0H.2 DATA     BIT       MOTOR_FI
+      00FF0003H   CODE     ---       motor_stop
+*SFR* 00000080H   DATA     BYTE      P0
+*SFR* 00000094H   DATA     BYTE      P0M0
+*SFR* 00000093H   DATA     BYTE      P0M1
+*SFR* 00000090H   DATA     BYTE      P1
+*SFR* 00000092H   DATA     BYTE      P1M0
+*SFR* 00000091H   DATA     BYTE      P1M1
+*SFR* 000000A0H   DATA     BYTE      P2
+*SFR* 00000096H   DATA     BYTE      P2M0
+*SFR* 00000095H   DATA     BYTE      P2M1
+*SFR* 000000B0H   DATA     BYTE      P3
+*SFR* 000000B2H   DATA     BYTE      P3M0
+*SFR* 000000B1H   DATA     BYTE      P3M1
+*SFR* 000000A2H   DATA     BYTE      P_SW1
+*SFR* 000000BAH   DATA     BYTE      P_SW2
+      00FF0559H   CODE     ---       read_pressed_keys
+      00FF0436H   CODE     ---       report_ir
+*SFR* 00000098H.0 DATA     BIT       RI
+*SFR* 000000FFH   DATA     BYTE      RSTCFG
+*SFR* 00000099H   DATA     BYTE      SBUF
+*SFR* 00000098H   DATA     BYTE      SCON
+      00FF0317H   CODE     ---       status
+*SFR* 00000088H   DATA     BYTE      TCON
+*SFR* 00000088H.5 DATA     BIT       TF0
+*SFR* 0000008CH   DATA     BYTE      TH0
+*SFR* 0000008DH   DATA     BYTE      TH1
+*SFR* 00000098H.1 DATA     BIT       TI
+      00FF0490H   CODE     ---       timer0_isr
+*SFR* 0000008AH   DATA     BYTE      TL0
+*SFR* 0000008BH   DATA     BYTE      TL1
+*SFR* 00000089H   DATA     BYTE      TMOD
+*SFR* 00000088H.4 DATA     BIT       TR0
+L251 LINKER/LOCATER V4.66.93.0                                                        11/10/2026  15:42:53  PAGE 4
+
+
+*SFR* 00000088H.6 DATA     BIT       TR1
+      00FF060EH   CODE     ---       uart_char
+      00FF05D1H   CODE     ---       uart_text
+*SFR* 000000C1H   DATA     BYTE      WDT_CONTR
+
+
+
+SYMBOL TABLE OF MODULE:  LB_IR001 (main)
+
+      VALUE       REP       CLASS    TYPE      SYMBOL NAME
+      ====================================================
+      ---         MODULE    ---      ---       main
+      00FF0152H   PUBLIC    CODE     ---       configure_ir
+      00FF0490H   PUBLIC    CODE     ---       timer0_isr
+      00FF0559H   PUBLIC    CODE     ---       read_pressed_keys
+      00FF000EH   PUBLIC    CODE     ---       main
+      00FF0317H   PUBLIC    CODE     ---       status
+      00FF0579H   PUBLIC    CODE     ---       hex_digit
+      00FF060EH   PUBLIC    CODE     ---       uart_char
+      00FF0436H   PUBLIC    CODE     ---       report_ir
+      00FF0003H   PUBLIC    CODE     ---       motor_stop
+      00FF0533H   PUBLIC    CODE     ---       hex_word
+      00FF05D1H   PUBLIC    CODE     ---       uart_text
+      00000008H   PUBLIC    DATA     ---       control
+      00000011H   PUBLIC    DATA     BYTE      heartbeat
+      00000012H   PUBLIC    DATA     ---       ir
+      0000001EH   PUBLIC    DATA     BYTE      divider
+      00000094H   SFRSYM    DATA     BYTE      P0M0
+      000000C1H   SFRSYM    DATA     BYTE      WDT_CONTR
+      00000088H.6 SFRSYM    DATA     BIT       TR1
+      00000088H.4 SFRSYM    DATA     BIT       TR0
+      0000008BH   SFRSYM    DATA     BYTE      TL1
+      0000008AH   SFRSYM    DATA     BYTE      TL0
+      0000008DH   SFRSYM    DATA     BYTE      TH1
+      0000008CH   SFRSYM    DATA     BYTE      TH0
+      000000FFH   SFRSYM    DATA     BYTE      RSTCFG
+      00000088H.5 SFRSYM    DATA     BIT       TF0
+      0000008EH   SFRSYM    DATA     BYTE      AUXR
+      00000089H   SFRSYM    DATA     BYTE      TMOD
+      00000088H   SFRSYM    DATA     BYTE      TCON
+      00000098H   SFRSYM    DATA     BYTE      SCON
+      00000099H   SFRSYM    DATA     BYTE      SBUF
+      000000A0H.7 SFRSYM    DATA     BIT       KEY_SW3
+      00000090H.7 SFRSYM    DATA     BIT       IR_TX
+      00000080H.2 SFRSYM    DATA     BIT       KEY_SW2
+      000000A0H.6 SFRSYM    DATA     BIT       KEY_SW1
+      00000090H.4 SFRSYM    DATA     BIT       IR_RX
+      00000098H.1 SFRSYM    DATA     BIT       TI
+      00000098H.0 SFRSYM    DATA     BIT       RI
+      000000A8H   SFRSYM    DATA     BYTE      IE
+      000000BAH   SFRSYM    DATA     BYTE      P_SW2
+      000000A2H   SFRSYM    DATA     BYTE      P_SW1
+      000000B0H   SFRSYM    DATA     BYTE      P3
+      000000A0H.2 SFRSYM    DATA     BIT       MOTOR_FI
+      000000A0H   SFRSYM    DATA     BYTE      P2
+      000000B1H   SFRSYM    DATA     BYTE      P3M1
+      00000090H   SFRSYM    DATA     BYTE      P1
+      00000095H   SFRSYM    DATA     BYTE      P2M1
+      000000B2H   SFRSYM    DATA     BYTE      P3M0
+      00000080H   SFRSYM    DATA     BYTE      P0
+      00000091H   SFRSYM    DATA     BYTE      P1M1
+      00000096H   SFRSYM    DATA     BYTE      P2M0
+      00000093H   SFRSYM    DATA     BYTE      P0M1
+      00000092H   SFRSYM    DATA     BYTE      P1M0
+      000000A0H.0 SFRSYM    DATA     BIT       MOTOR_BI
+L251 LINKER/LOCATER V4.66.93.0                                                        11/10/2026  15:42:53  PAGE 5
+
+
+
+      ---         MODULE    ---      ---       ?C_START
+      00FF0000H   PUBLIC    CODE     ---       ?C?STARTUP
+      00FF0000H   PUBLIC    CODE     ---       ?C_STARTUP
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0653H BYTE (79%) *
+******************************************************************************
+
+Program Size: data=33.0 edata+hdata=256 xdata=0 const=85 code=1559
+L251 RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

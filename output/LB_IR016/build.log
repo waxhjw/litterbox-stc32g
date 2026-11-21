@@ -1,0 +1,22 @@
+
+C251 COMPILER V5.60.0.0
+COPYRIGHT ARM Germany GmbH 2018
+*** WARNING C500 IN LINE 1 OF D:\projects\litterbox-stc32g\diagnostics\IR016\array_main.c: MISSING SERIAL NUMBER IN 'TOOLS.INI'
+
+C251 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)
+
+
+L251 LINKER/LOCATER V4.66.93.0 - SN: Eval Version
+COPYRIGHT ARM Germany GmbH 1995 - 2018
+main.obj TO LB_IR016 PRINT(LB_IR016.map) ******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 07F4H BYTE (99%) *
+******************************************************************************
+
+Program Size: data=58.3 edata+hdata=256 xdata=0 const=31 code=2030
+L251 RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)
+
+
+MCS 51/251 OBJECT TO HEX FILE CONVERTER V1.47.0.0
+COPYRIGHT ARM Germany GmbH 2000 - 2018
+
+GENERATING INTEL H386 FILE: LB_IR016.hex

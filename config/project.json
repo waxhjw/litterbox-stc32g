@@ -1,0 +1,17 @@
+{
+  "schema": 1,
+  "model": "STC32G8K64",
+  "toolchain": ".tools/keil-c251/C251",
+  "uv4": "D:/keil_v5/UV4/UV4.exe",
+  "serial_adapter": "CH340",
+  "port_hint": null,
+  "usb_vid": 6790,
+  "usb_pid": 29987,
+  "baud": 115200,
+  "handshake_baud": 2400,
+  "product": {
+    "keil_project": null,
+    "target": null,
+    "hex": null
+  }
+}

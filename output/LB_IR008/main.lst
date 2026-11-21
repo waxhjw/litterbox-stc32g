@@ -1,0 +1,271 @@
+C251 COMPILER V5.60.0,  array_main                                                         11/11/26  16:53:30  PAGE 1   
+
+
+C251 COMPILER V5.60.0, COMPILATION OF MODULE array_main
+OBJECT MODULE PLACED IN main.obj
+COMPILER INVOKED BY: D:\projects\litterbox-stc32g\.tools\keil-c251\C251\BIN\C251.EXE D:\projects\litterbox-stc32g\diagno
+                    -stics\IR008\array_main.c SMALL MODSRC INCDIR(D:\projects\litterbox-stc32g\diagnostics\IR008) OBJECT(main.obj) PRINT(main
+                    -.lst) OPTIMIZE(9,SIZE) ROM(SMALL) 
+
+stmt  level    source
+
+*** WARNING C500 IN LINE 1 OF D:\projects\litterbox-stc32g\diagnostics\IR008\array_main.c: MISSING SERIAL NUMBER IN 'TOO
+             -LS.INI'
+    1          /* IR008：在IR007采样基础上加入三路38kHz载波发射，并获得"真正的光学闭环"。
+    2           * 2026-11-11实测结论：①两根长条身份已确定——CN3读约2400(3.0V)为黑色圆顶接收�
+             -��，
+    3           * CN7读约950(1.19V)为透明圆顶发射条；②接收条在CN3、发射条在CN7时读数稳定2400�
+             -��
+    4           * 说明接收头有电、输出级完好；③但三路发射脚上电即高阻释放，从未输出过
+             -38kHz，
+    5           * 故接收头恒为高电平——"有没有对准"在此之前无法判定。
+    6           * 本版新增：Timer0中断周期由100us改为13.16us(145个时钟)，中断内直接翻转
+    7           * P0.4/P5.2/P5.3产生38.13kHz载波（误差0.34%），并保持原有100:1分频节拍
+    8           * （100×13.16us=1.316ms，8200次为10.8ms），使按键长按、遮挡判定等行为不变。
+    9           * 载波采用10ms开1ms窗口，平均占空比5%；支持同步/轮询两种模式。
+   10           * 判定方式：三路ADC从约2400掉到低位即表示该路收到载波（光路通），
+   11           * 不掉则说明该路无光或未对准，可逐路定位。不做遮挡停机与安全承诺。
+   12           */
+   13          #include "motor_control.h"
+   14          #include "motor_ir_guard.h"
+   15          #include "array_probe_state.h"
+   16          #include "ir_carrier_state.h"
+   17          sfr P0=0x80; sfr P0M0=0x94; sfr P0M1=0x93;
+   18          sfr P1=0x90; sfr P1M0=0x92; sfr P1M1=0x91;
+   19          sfr P2=0xA0; sfr P2M0=0x96; sfr P2M1=0x95;
+   20          sfr P3=0xB0; sfr P3M0=0xB2; sfr P3M1=0xB1;
+   21          sfr P5=0xC8; sfr P5M0=0xCA; sfr P5M1=0xC9;
+   22          sfr P_SW1=0xA2; sfr P_SW2=0xBA;
+   23          sfr IE=0xA8; sfr AUXR=0x8E; sfr TMOD=0x89; sfr TCON=0x88;
+   24          sfr TL0=0x8A; sfr TH0=0x8C; sfr TL1=0x8B; sfr TH1=0x8D;
+   25          sfr SCON=0x98; sfr SBUF=0x99; sfr WDT_CONTR=0xC1; sfr RSTCFG=0xFF;
+   26          sfr ADC_CONTR=0xBC; sfr ADC_RES=0xBD; sfr ADC_RESL=0xBE; sfr ADCCFG=0xDE;
+   27          sbit MOTOR_BI=P2^0; sbit MOTOR_FI=P2^2;
+   28          sbit KEY1=P2^6; sbit KEY2=P0^2; sbit KEY3=P2^7;
+   29          sbit ARRAY_TX1=P0^4; sbit ARRAY_TX2=P5^2; sbit ARRAY_TX3=P5^3;
+   30          sbit TR0=TCON^4; sbit TF0=TCON^5; sbit TR1=TCON^6;
+   31          sbit RI=SCON^0; sbit TI=SCON^1;
+   32          #define XREG(addr) (*(unsigned char volatile far *)(addr))
+   33          #define ADCTIM XREG(0x7EFEA8UL)
+   34          #define FOSC 11059200UL
+   35          /* 145个时钟半周期 → 11.0592M/145/2 = 38.13kHz；用-145而非-144避免中断重载偏差。 */
+   36          #define T0_HALF_CLOCKS 145UL
+   37          #define T0_RELOAD (65536UL-T0_HALF_CLOCKS)
+   38          #define UART_RELOAD (65536UL-FOSC/115200UL/4UL)
+   39          /* 1ms窗口=76个半周期；9ms静默=684个半周期；合计760个半周期≈10ms。 */
+   40          #define BURST_HALF 76U
+   41          #define GATE_HALF 684U
+   42          /* 10ms节拍由载波半周期累加得到，8200×13.16us≈10.8ms，原100us×100不变其相对关系
+             -。 */
+   43          #define TICK_HALF_PER_10MS 8200U
+   44          volatile MotorControl control;
+   45          volatile MotorIrGuard guard;
+   46          volatile ArrayProbe probe;
+   47          volatile IrCarrier carrier;
+   48          volatile unsigned char heartbeat;
+   49          unsigned int tick_half;
+   50          unsigned char divider;
+   51          
+C251 COMPILER V5.60.0,  array_main                                                         11/11/26  16:53:30  PAGE 2   
+
+   52          
+   53          void array_release(void)
+   54          {
+   55   1          /* 只释放三个控制脚，不改按键P0.2和其它GPIO；高阻不是光学关闭证明。 */
+   56   1          P0M1|=0x10; P0M0&=0xEF;
+   57   1          P5M1|=0x0C; P5M0&=0xF3;
+   58   1      }
+   59          void array_pushpull(void)
+   60          {
+   61   1          /* 先写锁存值再切推挽，避免切换瞬间产生毛刺把发射管点亮。 */
+   62   1          ARRAY_TX1=0; ARRAY_TX2=0; ARRAY_TX3=0;
+   63   1          P0M1&=0xEF; P0M0|=0x10;
+   64   1          P5M1&=0xF3; P5M0|=0x0C;
+   65   1      }
+   66          unsigned char pressed_keys(void)
+   67          {
+   68   1          unsigned char keys=0;
+   69   1          if (KEY1==0) keys|=1;
+   70   1          if (KEY2==0) keys|=2;
+   71   1          if (KEY3==0) keys|=4;
+   72   1          return keys;
+   73   1      }
+   74          /* 三路同步：同一电平同时落到三个发射脚。 */
+   75          void carrier_apply(unsigned char level)
+   76          {
+   77   1          ARRAY_TX1=level; ARRAY_TX2=level; ARRAY_TX3=level;
+   78   1      }
+   79          void timer0_isr(void) interrupt 1
+   80          {
+   81   1          unsigned char level;
+   82   1          heartbeat++;
+   83   1          if (carrier.mode!=CARRIER_IDLE) {
+   84   2              level=ir_carrier_tick(&carrier,BURST_HALF,GATE_HALF);
+   85   2              carrier_apply(level);
+   86   2          }
+   87   1          if (array_probe_tick(&probe)) array_release();
+   88   1          if (++tick_half>=TICK_HALF_PER_10MS) {
+   89   2              tick_half=0;
+   90   2              if (++divider>=100) {
+   91   3                  divider=0;
+   92   3                  motor_control_tick(&control,pressed_keys());
+   93   3                  /* 采样阶段无有效光路判定；保持未接模块也能独立测试电机的约定。
+             - */
+   94   3                  motor_ir_guard_tick(&guard,control.running,IR_UNKNOWN);
+   95   3                  MOTOR_BI=0; MOTOR_FI=guard.actual;
+   96   3                  if (control.running && probe.active) { array_probe_cancel(&probe); array_release(); }
+   97   3              }
+   98   2          }
+   99   1      }
+  100          void uart_char(unsigned char c)
+  101          {
+  102   1          TI=0; SBUF=c;
+  103   1          while (TI==0) { } /* 期间中断继续限时释放探测/输出载波，主循环异常由看门狗�
+             -��复。 */
+  104   1      }
+  105          void uart_text(const char far *p) { while (*p) uart_char(*p++); }
+  106          void hex_digit(unsigned char n) { n&=15; uart_char(n<10 ? n+'0' : n-10+'A'); }
+  107          void hex_word(unsigned int n)
+  108          {
+  109   1          hex_digit((unsigned char)(n>>12)); hex_digit((unsigned char)(n>>8));
+  110   1          hex_digit((unsigned char)(n>>4)); hex_digit((unsigned char)n);
+  111   1      }
+  112          void status(void)
+  113          {
+  114   1          uart_text("IR008 "); uart_text(guard.actual ? "RUN KEYS=" : "STOP KEYS=");
+  115   1          uart_char(KEY1 ? '1':'0'); uart_char(KEY2 ? '1':'0'); uart_char(KEY3 ? '1':'0');
+C251 COMPILER V5.60.0,  array_main                                                         11/11/26  16:53:30  PAGE 3   
+
+  116   1          uart_text(" PROBE="); hex_digit(probe.active);
+  117   1          uart_text(" RST="); hex_word(RSTCFG);
+  118   1          uart_text(" REQ="); hex_digit(control.running);
+  119   1          uart_text(" CARRIER="); hex_digit(carrier.mode);
+  120   1          uart_text(" ARRAY=SAMPLE\r\n"); /* 明示采样阶段，不能当作遮挡保护已经启用。 */
+  121   1      }
+  122          unsigned int adc_read(unsigned char channel)
+  123          {
+  124   1          unsigned int timeout=2000;
+  125   1          ADC_CONTR=0xC0|channel; /* 开电源、选通道、清旧FLAG并启动。 */
+  126   1          while ((ADC_CONTR&0x20)==0) {
+  127   2              if (--timeout==0) { ADC_CONTR=0; return 0xFFFF; }
+  128   2          }
+  129   1          ADC_CONTR&=0xDF;
+  130   1          return ((unsigned int)ADC_RES<<8)|ADC_RESL;
+  131   1      }
+  132          /* 采样窗口刻意对齐"静默段"，先关载波再采样，避免载波边沿自己干扰读数。
+  133           * 接收头输出是解调后的电平，静默期内仍然保持低，因此关载波不影响判定。
+             - */
+  134          void report_array(void)
+  135          {
+  136   1          unsigned int raw[3];
+  137   1          unsigned char i;
+  138   1          for (i=0;i<3;i++) raw[i]=adc_read(i ? i-1 : 14);
+  139   1          uart_text("IR008 ADC=");
+  140   1          for (i=0;i<3;i++) { hex_word(raw[i]); uart_char(i==2 ? '\r':','); }
+  141   1          uart_text("\nCARRIER="); hex_digit(carrier.mode);
+  142   1          uart_text(" LIVE="); hex_digit(probe.active); uart_text("\r\n");
+  143   1      }
+  144          void probe_command(unsigned char command_id)
+  145          {
+  146   1          unsigned char high;
+  147   1          IE=0;
+  148   1          if (array_probe_begin(&probe,command_id,control.running)==0) {
+  149   2              IE=0x82; uart_text("IR008 REJECT\r\n"); return;
+  150   2          }
+  151   1          array_release(); high=command_id>3 ? 1:0; if (high) command_id-=3;
+  152   1          /* 先设单个脚锁存值，再开启该脚推挽；不会读取按键低电平后误锁住P0.2。 
+             -*/
+  153   1          if (command_id==1) { ARRAY_TX1=high; P0M1&=0xEF; P0M0|=0x10; }
+  154   1          else if (command_id==2) { ARRAY_TX2=high; P5M1&=0xFB; P5M0|=0x04; }
+  155   1          else { ARRAY_TX3=high; P5M1&=0xF7; P5M0|=0x08; }
+  156   1          IE=0x82;
+  157   1          report_array();
+  158   1      }
+  159          /* 载波开关：'c'=三路同步发，'k'=停。
+  160           * 关载波时先停状态机再把三个脚钉低并释放，保证发射管彻底灭。 */
+  161          void carrier_command(unsigned char mode)
+  162          {
+  163   1          IE=0;
+  164   1          if (mode==CARRIER_IDLE) {
+  165   2              ir_carrier_stop(&carrier);
+  166   2              ARRAY_TX1=0; ARRAY_TX2=0; ARRAY_TX3=0;
+  167   2              array_release();
+  168   2          } else {
+  169   2              array_pushpull();
+  170   2              ir_carrier_start(&carrier);
+  171   2          }
+  172   1          IE=0x82;
+  173   1          status();
+  174   1      }
+  175          void handle_command(unsigned char value)
+  176          {
+  177   1          if (value=='!' || value=='0') {
+  178   2              IE=0; motor_control_stop(&control); guard.actual=0; MOTOR_BI=0; MOTOR_FI=0;
+  179   2              array_probe_cancel(&probe); IE=0x82;
+C251 COMPILER V5.60.0,  array_main                                                         11/11/26  16:53:30  PAGE 4   
+
+  180   2              carrier_command(CARRIER_IDLE);
+  181   2          } else if (value=='?') status();
+  182   1          else if (value=='a') report_array();
+  183   1          else if (value=='c') carrier_command(CARRIER_SYNC);
+  184   1          else if (value=='k') carrier_command(CARRIER_IDLE);
+  185   1          else if (value>='A' && value<='F') probe_command((unsigned char)(value-'A'+1));
+  186   1      }
+  187          void main(void)
+  188          {
+  189   1          unsigned char value,last_heartbeat=0,previous_run=0;
+  190   1          IE=0; MOTOR_BI=0; MOTOR_FI=0;
+  191   1          P2M1&=0xFA; P2M0|=0x05;
+  192   1          RSTCFG=(RSTCFG&0xBC)|0x41; P_SW2|=0x80;
+  193   1          /* 三接收脚内部4K上拉：VDD已实测5.1V仍读0，疑似开漏输出（手册1767页定义）
+             -。 */
+  194   1          XREG(0x7EFE10UL)|=0x40; /* P0PU.bit6 → P0.6/ADC14/REV1 */
+  195   1          XREG(0x7EFE11UL)|=0x03; /* P1PU.bit1/bit0 → P1.1/REV3、P1.0/ADC0/REV2 */
+  196   1          array_release();
+  197   1          P0M0&=0xBB; P0M1=(P0M1&0xFB)|0x40; /* P0.6高阻ADC14，P0.2原按键准双向。 */
+  198   1          P1M0=(P1M0&0xFC)|0x80; P1M1=(P1M1&0x7F)|0x03; /* ADC0/1输入，旧Q10控制脚保持低。 */
+  199   1          P1&=0x7F; XREG(0x7EFEB1UL)=0; XREG(0x7EFEC0UL)=0;
+  200   1          P0|=0x04; P2|=0xC0; P2M0&=0x3F; P2M1&=0x3F;
+  201   1          P_SW1&=0x3F; P3|=0x03; P3M0=(P3M0&0xFC)|0x02; P3M1=(P3M1&0xFC)|0x01;
+  202   1          ADCTIM=0x3F; ADCCFG=0x2F; ADC_CONTR=0x80;
+  203   1          motor_control_init(&control); motor_ir_guard_init(&guard); array_probe_init(&probe);
+  204   1          ir_carrier_init(&carrier); tick_half=0; divider=0;
+  205   1          heartbeat=0;
+  206   1          TR0=0; TR1=0; TMOD=0; AUXR=(AUXR|0xC0)&0xFE;
+  207   1          TH0=(unsigned char)(T0_RELOAD>>8); TL0=(unsigned char)T0_RELOAD;
+  208   1          TH1=(unsigned char)(UART_RELOAD>>8); TL1=(unsigned char)UART_RELOAD;
+  209   1          SCON=0x50; TF0=0; TR1=1; TR0=1; IE=0x82; WDT_CONTR=0x33;
+  210   1          uart_text("BOOT\r\n"); status();
+  211   1          for (;;) {
+  212   2              if (last_heartbeat!=heartbeat) { last_heartbeat=heartbeat; WDT_CONTR=0x33; }
+  213   2              if (previous_run!=guard.actual) { previous_run=guard.actual; status(); }
+  214   2              if (RI) {
+  215   3                  value=SBUF; RI=0;
+  216   3                  handle_command(value);
+  217   3              }
+  218   2          }
+  219   1      }
+
+
+Module Information          Static   Overlayable
+------------------------------------------------
+  code size            =      1779     ------
+  ecode size           =    ------     ------
+  data size            =        26          6
+  idata size           =    ------     ------
+  pdata size           =    ------     ------
+  xdata size           =    ------     ------
+  xdata-const size     =    ------     ------
+  edata size           =    ------     ------
+  bit size             =    ------     ------
+  ebit size            =    ------     ------
+  bitaddressable size  =    ------     ------
+  ebitaddressable size =    ------     ------
+  far data size        =    ------     ------
+  huge data size       =    ------     ------
+  const size           =    ------     ------
+  hconst size          =       127     ------
+End of Module Information.
+
+
+C251 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

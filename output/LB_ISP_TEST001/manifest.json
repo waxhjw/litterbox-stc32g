@@ -1,0 +1,16 @@
+{
+  "bytes": 51,
+  "start": "0xff0000",
+  "end": "0xff0032",
+  "sha256": "be0f6089857bf41b34a969c04910cade2e595575086c934d6224649795f1ff54",
+  "version": "LB_ISP_TEST001",
+  "kind": "diagnostic",
+  "model": "STC32G8K64",
+  "source_sha256": "f1183df692d83496113d4719a6f72a2820a01ae210d06295761d6a1266125718",
+  "tool_sha256": "5611babb3de550d05eb7490997811667dd08d600033f449169d18da4bb3886b0",
+  "hardware_tested": false,
+  "purpose": "serial ISP download test only",
+  "original_functions_inherited": false,
+  "rollback_firmware_available": false,
+  "compiler_license": "official C251 evaluation 2KB"
+}

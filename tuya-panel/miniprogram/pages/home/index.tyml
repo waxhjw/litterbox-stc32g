@@ -1,0 +1,29 @@
+<view class="panel">
+  <view class="header">
+    <text class="name">猫砂盆</text>
+    <view class="connection {{online ? 'connected' : ''}}">
+      <view class="dot"></view>
+      <text>{{connection}}</text>
+    </view>
+  </view>
+
+  <view class="status">
+    <view class="status-copy">
+      <text class="status-title">{{title}}</text>
+      <text class="description" ty:if="{{description}}">{{description}}</text>
+    </view>
+    <image class="cat" src="/assets/cat-and-tray.png" mode="aspectFit"></image>
+  </view>
+
+  <button class="action primary {{cleanDisabled ? 'unavailable' : ''}}"
+          disabled="{{cleanDisabled}}" bind:tap="startCleaning">
+    <image src="/assets/litter-scoop.png" class="scoop" mode="aspectFit"></image>
+    <text>开始清理</text>
+  </button>
+
+  <button class="action secondary {{pauseDisabled ? 'unavailable' : ''}}"
+          disabled="{{pauseDisabled}}" bind:tap="togglePause">
+    <view class="icon"><view class="{{paused ? 'play' : 'pause'}}"></view></view>
+    <text>{{paused ? '继续清理' : '暂停清理'}}</text>
+  </button>
+</view>

@@ -1,0 +1,29 @@
+{
+  "bytes": 2061,
+  "start": "0xff0000",
+  "end": "0xff080c",
+  "sha256": "beb564ea26778a2806e23a4f1859784793e85c0c91bc4fb554c2389f7b9d27d1",
+  "version": "LB_IR016",
+  "kind": "diagnostic",
+  "model": "STC32G8K64",
+  "source_sha256": "1560793e6b2acd8bd6aba8c64edb8f82ead5617b7c5a77b0da4d5d8327d2f403",
+  "tool_sha256": "494a627a4e7d22b086872d4790005aa491ba694e0a48b99cd4897e58b9a0b6e7",
+  "hardware_tested": false,
+  "purpose": "three-beam motor interlock with read-only Hall diagnostics",
+  "original_functions_inherited": false,
+  "rollback_firmware_available": false,
+  "compiler_license": "official C251 evaluation 2KB",
+  "compiler_options": [
+    "OPTIMIZE(9,SIZE)",
+    "ROM(SMALL)"
+  ],
+  "trim_khz": 11059.2,
+  "extra_sources": {
+    "motor_control.h": "ea5ec5df02f34c5ef8ba37d532c1a3581c220c98dc89ee81cb5a940b1cc5f11b",
+    "motor_ir_guard.h": "7056de98c3bcb7d118bd1ee146fc63b8f15c217c026613a0e0fb3aa43e60abc9",
+    "ir_carrier_state.h": "f6e4a182a50c8509263d152a710aad56a7fb16aa483f5453d6408b500f10a285",
+    "ir_beam_state.h": "b016a22d1981c2cb7b15087d8084d1ea8a6dd6ec4313c8b70eaed52a31e6e4e2"
+  },
+  "diagnostic_scope": "three-beam motor interlock; old single IR link temporarily inactive; motor-only bench test explicitly enabled",
+  "purpose_detail": "IR015 plus hall-low precondition for initial motor output; IRB status"
+}

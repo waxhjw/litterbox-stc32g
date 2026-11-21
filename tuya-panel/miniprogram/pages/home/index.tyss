@@ -1,0 +1,128 @@
+page {
+  background: #f8f3eb;
+  color: #25392e;
+}
+
+.panel {
+  box-sizing: border-box;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 38rpx 42rpx 48rpx;
+}
+
+.header {
+  min-height: 68rpx;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 30rpx;
+}
+
+.name {
+  font-size: 48rpx;
+  line-height: 1.25;
+  font-weight: 700;
+}
+
+.connection {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  padding: 8rpx 0;
+  color: #63594d;
+  font-size: 28rpx;
+  font-weight: 600;
+}
+
+.connection.connected {
+  color: #244d36;
+}
+
+.dot {
+  width: 14rpx;
+  height: 14rpx;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 214rpx;
+  margin-bottom: 32rpx;
+  color: #25392e;
+}
+
+.status-copy {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  padding-right: 24rpx;
+}
+
+.status-title {
+  font-size: 60rpx;
+  font-weight: 700;
+  line-height: 1.22;
+}
+
+.description {
+  margin-top: 14rpx;
+  color: #665440;
+  font-size: 30rpx;
+  line-height: 1.55;
+}
+
+.cat {
+  flex-shrink: 0;
+  width: 208rpx;
+  height: 142rpx;
+}
+
+.action {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 138rpx;
+  padding: 16rpx 29rpx;
+  margin: 0 0 22rpx;
+  border: 3rpx solid transparent;
+  border-radius: 32rpx;
+  font-size: 43rpx;
+  font-weight: 700;
+  text-align: left;
+  line-height: 1.25;
+}
+
+.action::after { border: 0; }
+.primary { background: #224d39; color: #fffdf7; }
+.secondary { background: transparent; color: #263c30; border-color: #8e9b85; }
+.action.unavailable { background: #efe9df; color: #605e54; border-color: #ddd6c8; }
+
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 76rpx;
+  height: 88rpx;
+  margin-right: 26rpx;
+  color: #315840;
+}
+
+.unavailable .icon { color: #605e54; }
+.scoop {
+  flex-shrink: 0;
+  width: 76rpx;
+  height: 76rpx;
+  margin-right: 26rpx;
+  background: #f5eddc;
+  border-radius: 20rpx;
+}
+.pause { width: 20rpx; height: 33rpx; border-left: 9rpx solid; border-right: 9rpx solid; }
+.play { width: 0; height: 0; border-top: 18rpx solid transparent; border-bottom: 18rpx solid transparent; border-left: 28rpx solid; }
+

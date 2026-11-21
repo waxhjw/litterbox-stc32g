@@ -1,0 +1,29 @@
+{
+  "bytes": 1593,
+  "start": "0xff0000",
+  "end": "0xff0640",
+  "sha256": "f898dbb7c003565771ed08f10efe5ab983fdaeb17f3a8dbc76060e9d359202be",
+  "version": "LB_IR006",
+  "kind": "diagnostic",
+  "model": "STC32G8K64",
+  "source_sha256": "44f57fb87149773fd32c0432644c97e0eabc99152024fdaf1caf652153e4250c",
+  "tool_sha256": "1a269cebb1796d9e307eb64569169ee1c0a9d9af94fa6d70a79d621382eadb79",
+  "hardware_tested": false,
+  "purpose": "serial ISP download test only",
+  "original_functions_inherited": false,
+  "rollback_firmware_available": false,
+  "compiler_license": "official C251 evaluation 2KB",
+  "compiler_options": [
+    "OPTIMIZE(9,SIZE)",
+    "ROM(SMALL)"
+  ],
+  "trim_khz": 11059.2,
+  "extra_sources": {
+    "motor_control.h": "ea5ec5df02f34c5ef8ba37d532c1a3581c220c98dc89ee81cb5a940b1cc5f11b",
+    "ir_control.h": "23ec2d27200b0b5623f45bee394c39cb71c80f620c09cca7fe74679d791ae4ea",
+    "motor_ir_guard.h": "6dfc5b342674428318c4bbeb8b142e7e829d5c49ee8015a1d679a8259a77e073",
+    "array_probe_state.h": "047a7d660da397d55b2018da13379af2c20afa4dc5c67f173ad97ada24538186"
+  },
+  "diagnostic_scope": "array raw ADC and bounded pin probes; old single IR link temporarily inactive; motor key and stop retained",
+  "purpose_detail": "three channel raw ADC14/0/1; 5ms pin probes with 100ms cooldown; long-press motor retained; no uncalibrated IR stop decisions"
+}

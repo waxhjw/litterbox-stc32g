@@ -1,0 +1,27 @@
+
+C251 COMPILER V5.60.0.0
+COPYRIGHT ARM Germany GmbH 2018
+*** WARNING C500 IN LINE 1 OF D:\projects\litterbox-stc32g\diagnostics\MOTOR001\main.c: MISSING SERIAL NUMBER IN 'TOOLS.INI'
+*** WARNING C151 IN LINE 73 OF D:\projects\litterbox-stc32g\diagnostics\MOTOR001\main.c: pointer truncation: 'huge const' to 'code'
+*** WARNING C151 IN LINE 74 OF D:\projects\litterbox-stc32g\diagnostics\MOTOR001\main.c: pointer truncation: 'huge const' to 'code'
+*** WARNING C151 IN LINE 75 OF D:\projects\litterbox-stc32g\diagnostics\MOTOR001\main.c: pointer truncation: 'huge const' to 'code'
+*** WARNING C151 IN LINE 76 OF D:\projects\litterbox-stc32g\diagnostics\MOTOR001\main.c: pointer truncation: 'huge const' to 'code'
+*** WARNING C151 IN LINE 114 OF D:\projects\litterbox-stc32g\diagnostics\MOTOR001\main.c: pointer truncation: 'huge const' to 'code'
+
+C251 COMPILATION COMPLETE.  6 WARNING(S),  0 ERROR(S)
+
+
+L251 LINKER/LOCATER V4.66.93.0 - SN: Eval Version
+COPYRIGHT ARM Germany GmbH 1995 - 2018
+main.obj TO LB_MOTOR001 PRINT(LB_MOTOR001.map) ******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0253H BYTE (29%) *
+******************************************************************************
+
+Program Size: data=18.0 edata+hdata=256 xdata=0 const=80 code=540
+L251 RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)
+
+
+MCS 51/251 OBJECT TO HEX FILE CONVERTER V1.47.0.0
+COPYRIGHT ARM Germany GmbH 2000 - 2018
+
+GENERATING INTEL H386 FILE: LB_MOTOR001.hex

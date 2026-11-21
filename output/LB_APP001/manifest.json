@@ -1,0 +1,23 @@
+{
+  "bytes": 8819,
+  "start": "0xff0000",
+  "end": "0xff2283",
+  "sha256": "2b8f3eaa573764f374d3a369d64d3b1381c7e4bf7b4b713df1142b2079840959",
+  "version": "LB_APP001",
+  "kind": "diagnostic",
+  "model": "STC32G8K64",
+  "source_sha256": "f4bf89a9f5237072b592ac02dd23af7b68717e0c178cde91d8f3f4d549bfe418",
+  "tool_sha256": "2c11dfaec6004a493736e833fdc558f9c8e247e5eba95edb2facaaf82ab07008",
+  "compiler_cache_sha256": "34db3ff3888bc08bfdf417e47d8703d49564658e4bb2c5bf15c6a9b4af332521",
+  "extra_sources": {
+    "ir_beam_state.h": "acbd6ef6d720cc11eeb30be1c553cc5376f346e3182e5fe8b91be84b97722624",
+    "ir_carrier_state.h": "f6e4a182a50c8509263d152a710aad56a7fb16aa483f5453d6408b500f10a285",
+    "motor_control.h": "e01526ed8b1aa622205206af4f1621bce01db1e12adba1f996b7d6ca2afe85bd",
+    "motor_ir_guard.h": "7056de98c3bcb7d118bd1ee146fc63b8f15c217c026613a0e0fb3aa43e60abc9",
+    "tuya_link.h": "05b965f3eb4f3fc2ecce040ee00035a48747e4b910e65bba348e81a5b723338c",
+    "wifi_uart.h": "5eec927a36e6308db12b9ed443244f8ed692106f91e48beb615035f248ab5073"
+  },
+  "trim_khz": 11059.2,
+  "hardware_tested": false,
+  "purpose": "IR017 + WIFI002 manual-clean request through the shared motor interlock"
+}

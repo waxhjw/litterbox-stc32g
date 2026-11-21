@@ -1,0 +1,10 @@
+{
+  "projectname": "猫砂盆长辈版",
+  "miniprogramRoot": "miniprogram/",
+  "baseversion": "2.27.0",
+  "dependencies": {
+    "DeviceKit": "4.6.1"
+  },
+  "description": "",
+  "debugBaseLibVersion": "2.33.6"
+}

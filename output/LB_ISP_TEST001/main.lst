@@ -1,0 +1,57 @@
+C251 COMPILER V5.60.0,  main                                                               10/11/26  10:40:38  PAGE 1   
+
+
+C251 COMPILER V5.60.0, COMPILATION OF MODULE main
+OBJECT MODULE PLACED IN main.obj
+COMPILER INVOKED BY: D:\projects\litterbox-stc32g\.tools\keil-c251\C251\BIN\C251.EXE D:\projects\litterbox-stc32g\diagno
+                    -stics\ISP_TEST001\main.c SMALL MODSRC OBJECT(main.obj) PRINT(main.lst) 
+
+stmt  level    source
+
+*** WARNING C500 IN LINE 1 OF D:\projects\litterbox-stc32g\diagnostics\ISP_TEST001\main.c: MISSING SERIAL NUMBER IN 'TOO
+             -LS.INI'
+    1          /*
+    2           * LB_ISP_TEST001：专门用于串口下载验证的诊断程序。
+    3           * 前置条件：本板型号/电平/供电已确认，电机等执行器与主板断开。
+    4           * 不继承原厂产品功能；用户已单独授权制作烧录试验固件。
+    5           * 本程序不配置应用GPIO、不启动电机、蜂鸣器、灯或WiFi通信。
+    6           * 不配置GPIO不能证明外部驱动关闭，必须先做物理隔离。
+    7           */
+    8          volatile unsigned long g_isp_test_signature;
+    9          volatile unsigned long g_isp_test_counter;
+   10          
+   11          void main(void)
+   12          {
+   13   1          /* 内存标记只用于标识诊断程序，不表示任何硬件已经通过测试。 */
+   14   1          g_isp_test_signature = 0x49535001UL;
+   15   1          g_isp_test_counter = 0UL;
+   16   1      
+   17   1          for (;;) {
+   18   2              /* 只增加内存计数；计数不是毫秒，不启用中断或外设。 */
+   19   2              g_isp_test_counter++;
+   20   2          }
+   21   1      }
+
+
+Module Information          Static   Overlayable
+------------------------------------------------
+  code size            =        26     ------
+  ecode size           =    ------     ------
+  data size            =         8     ------
+  idata size           =    ------     ------
+  pdata size           =    ------     ------
+  xdata size           =    ------     ------
+  xdata-const size     =    ------     ------
+  edata size           =    ------     ------
+  bit size             =    ------     ------
+  ebit size            =    ------     ------
+  bitaddressable size  =    ------     ------
+  ebitaddressable size =    ------     ------
+  far data size        =    ------     ------
+  huge data size       =    ------     ------
+  const size           =    ------     ------
+  hconst size          =    ------     ------
+End of Module Information.
+
+
+C251 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

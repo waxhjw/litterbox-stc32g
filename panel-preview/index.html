@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f8f3eb">
+  <title>猫砂盆 · 面板预览</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: "Microsoft YaHei UI", "PingFang SC", "Noto Sans SC", sans-serif;
+      color: #25392e;
+      background: #f8f3eb;
+      font-size: 16px;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: max(20px, env(safe-area-inset-top)) 22px 24px; }
+    .panel, .preview { width: min(100%, 438px); margin-inline: auto; }
+    header { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 18px; }
+    h1, h2, p { margin: 0; }
+    h1 { font-size: 1.55rem; line-height: 1.25; font-weight: 700; }
+    .connection {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      color: #244d36;
+      font-size: .95rem;
+      font-weight: 650;
+      white-space: nowrap;
+    }
+    .connection::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+    .connection[data-offline="true"] { color: #63594d; }
+    .status {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 112px;
+      margin-bottom: 17px;
+    }
+    .status-copy { min-width: 0; }
+    h2 { font-size: clamp(1.65rem, 8vw, 2.1rem); line-height: 1.25; font-weight: 700; }
+    .description { margin-top: 8px; max-width: 18em; color: #665440; font-size: .9rem; line-height: 1.55; }
+    .description:empty { display: none; }
+    .cat {
+      width: min(32%, 118px);
+      height: 80px;
+      object-fit: contain;
+      pointer-events: none;
+    }
+    .actions { display: grid; gap: 12px; }
+    .action {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      min-height: 72px;
+      width: 100%;
+      padding: 10px 16px;
+      border: 2px solid transparent;
+      border-radius: 18px;
+      font: inherit;
+      font-weight: 720;
+      font-size: 1.4rem;
+      text-align: left;
+      cursor: pointer;
+    }
+    .primary { background: #224d39; color: #fffdf7; }
+    .primary:not(:disabled):active { background: #183c2b; }
+    .secondary { background: transparent; color: #263c30; border-color: #8e9b85; }
+    .secondary:not(:disabled):active { background: #e9eeda; }
+    .action:disabled { background: #ede9e0; color: #605e54; border-color: #ddd6c8; cursor: default; }
+    .action:focus-visible, select:focus-visible, summary:focus-visible { outline: 3px solid #775303; outline-offset: 3px; }
+    .icon {
+      display: grid;
+      place-items: center;
+      flex: 0 0 40px;
+      height: 40px;
+      color: #315840;
+    }
+    .icon img { width: 38px; height: 38px; object-fit: contain; }
+    .primary .icon { background: #f5eddc; border-radius: 10px; }
+    .action:disabled .icon { color: #605e54; }
+    .pause-mark { width: 17px; height: 20px; border-inline: 5px solid currentColor; }
+    .pause-mark.continue { width: 0; height: 0; border: 0; border-block: 11px solid transparent; border-left: 17px solid currentColor; }
+    .preview { padding-top: 24px; color: #5c5041; font-size: .85rem; }
+    summary { width: fit-content; min-height: 44px; padding-block: 10px; cursor: pointer; }
+    .preview p { margin-block: 0 10px; line-height: 1.6; }
+    select { min-height: 44px; max-width: 100%; font: inherit; color: #302a23; }
+    @media (max-width: 360px) {
+      body { padding-inline: 18px; }
+      .status { min-height: 105px; }
+      .cat { height: 72px; }
+      .action { gap: 11px; min-height: 70px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      * { scroll-behavior: auto !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="panel" aria-label="猫砂盆控制面板">
+    <header>
+      <h1>猫砂盆</h1>
+      <span class="connection" id="connection">在线</span>
+    </header>
+    <section class="status" aria-label="工作状态" aria-live="polite" aria-atomic="true">
+      <div class="status-copy">
+        <h2 id="status-title">待机中</h2>
+        <p class="description" id="description"></p>
+      </div>
+      <img class="cat" src="cat-and-tray.png" alt="">
+    </section>
+    <div class="actions">
+      <button class="action primary" id="clean" type="button">
+        <span class="icon" aria-hidden="true"><img src="litter-scoop.png" alt=""></span>
+        <span>开始清理</span>
+      </button>
+      <button class="action secondary" id="pause" type="button" disabled>
+        <span class="icon" aria-hidden="true"><span class="pause-mark"></span></span>
+        <span id="pause-label">暂停清理</span>
+      </button>
+    </div>
+  </main>
+  <details class="preview">
+    <summary>切换预览状态</summary>
+    <p>这是界面预览，操作只改变演示状态。</p>
+    <label for="scenario">预览状态</label>
+    <select id="scenario">
+      <option value="idle">待机中</option>
+      <option value="waiting">等待清理</option>
+      <option value="cleaning">清理中</option>
+      <option value="paused">已暂停</option>
+      <option value="offline">设备离线</option>
+    </select>
+  </details>
+  <script>
+    const states = {
+      idle: ["待机中", ""],
+      waiting: ["等待清理", "设备正在确认是否可以清理。"],
+      cleaning: ["清理中", ""],
+      paused: ["已暂停", ""],
+      offline: ["设备离线", ""]
+    };
+
+    const title = document.querySelector("#status-title");
+    const description = document.querySelector("#description");
+    const connection = document.querySelector("#connection");
+    const clean = document.querySelector("#clean");
+    const pause = document.querySelector("#pause");
+    const pauseLabel = document.querySelector("#pause-label");
+    const pauseMark = document.querySelector(".pause-mark");
+    const scenario = document.querySelector("#scenario");
+    let state = "idle";
+    let timer;
+
+    function setState(next) {
+      clearTimeout(timer);
+      state = next;
+      const offline = state === "offline";
+      const paused = state === "paused";
+      [title.textContent, description.textContent] = states[state];
+      connection.textContent = offline ? "离线" : "在线";
+      connection.dataset.offline = String(offline);
+      clean.disabled = state !== "idle";
+      pause.disabled = state === "idle" || offline;
+      pauseLabel.textContent = paused ? "继续清理" : "暂停清理";
+      pauseMark.classList.toggle("continue", paused);
+      scenario.value = state;
+    }
+
+    function startDemo() {
+      setState("waiting");
+      timer = setTimeout(() => setState("cleaning"), 2600);
+    }
+
+    clean.addEventListener("click", startDemo);
+    pause.addEventListener("click", () => {
+      if (state === "paused") startDemo();
+      else setState("paused");
+    });
+    scenario.addEventListener("change", () => setState(scenario.value));
+  </script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+{
+  "bytes": 1640,
+  "start": "0xff0000",
+  "end": "0xff066a",
+  "sha256": "957931918ffbebeab7eda2b81b36a350f84f4a968c29d4325d19ba739e31ebde",
+  "version": "LB_IR002",
+  "kind": "diagnostic",
+  "model": "STC32G8K64",
+  "source_sha256": "8fca5d850060318f43436cef319d3b3fee235d4165f2a9560243ffe5a15f9e9d",
+  "tool_sha256": "144e6cda5cf14867a3004a7ac04525e95a24b1caceb1487cced52b817fc4c032",
+  "hardware_tested": false,
+  "purpose": "serial ISP download test only",
+  "original_functions_inherited": false,
+  "rollback_firmware_available": false,
+  "compiler_license": "official C251 evaluation 2KB",
+  "trim_khz": 11059.2,
+  "extra_sources": {
+    "motor_control.h": "ea5ec5df02f34c5ef8ba37d532c1a3581c220c98dc89ee81cb5a940b1cc5f11b",
+    "ir_control.h": "fce91f00903af2ad7183ae05c577ea1511b22c6baa79c5f52458dc18906b9941"
+  },
+  "purpose_detail": "raw IR input and bounded 36/38/40kHz burst test; inherits MOTOR003; startup TX off"
+}

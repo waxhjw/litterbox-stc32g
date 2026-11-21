@@ -1,0 +1,9 @@
+{
+  "pages": ["pages/home/index"],
+  "window": {
+    "navigationBarTitleText": "猫砂盆",
+    "navigationBarBackgroundColor": "#f8f3eb",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#f8f3eb"
+  }
+}
