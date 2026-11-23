@@ -2,6 +2,96 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "label": "猫砂盆 DRUM013: 构建单窗停机与5秒恢复",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "构建DRUM013", "--why", "生成单窗停机和5秒恢复固件", "run", "--", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Profile", "DRUM013", "-Action", "build"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 DRUM013: 下载单窗停机版（电机拔下）",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "下载DRUM013", "--why", "保留硬件选项并写入恢复时间调整", "run", "--", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Profile", "DRUM013", "-Action", "flash"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 DRUM013: 对照无遮挡通光（电机拔下）",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "采样DRUM013", "--why", "确认新的单窗判定下无遮挡基线", "run", "--", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Profile", "DRUM013", "-Action", "optical-check", "-Seconds", "15"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 DRUM012: 构建三路定相位诊断",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "构建DRUM012", "--why", "生成早中晚定相位采样镜像", "run", "--", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Profile", "DRUM012", "-Action", "build"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 DRUM012: 下载三路定相位诊断（电机拔下）",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "下载DRUM012", "--why", "保留硬件选项，写入三路采样诊断", "run", "--", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Profile", "DRUM012", "-Action", "flash"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 DRUM012: 对照三路早中晚采样（电机拔下）",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "采样DRUM012", "--why", "各路在相同相位上记录峰值和原阈值命中数", "run", "--", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Profile", "DRUM012", "-Action", "phase-check"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 DRUM011: 构建三路红外采样修正版",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "构建DRUM011", "--why", "生成三路ADC分轮采样的对照镜像", "run", "--", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Profile", "DRUM011", "-Action", "build"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 DRUM011: 下载三路红外采样修正版（电机拔下）",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "下载DRUM011", "--why", "保留硬件选项，写入采样修正版", "run", "--", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Profile", "DRUM011", "-Action", "flash"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 DRUM011: 对照三路单开和双组发射（电机拔下）",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "采样DRUM011", "--why", "对照两组红外输出和三路峰值", "run", "--", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Profile", "DRUM011", "-Action", "optical-check", "-Seconds", "12"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 DRUM010: 构建红外周期诊断版",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "构建DRUM010", "--why", "生成可对照单路红外发射间隔的诊断镜像", "run", "--", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Profile", "DRUM010", "-Action", "build"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 DRUM010: 下载周期诊断版（电机拔下）",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "下载DRUM010", "--why", "写入周期诊断镜像并保留硬件选项", "run", "--", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Profile", "DRUM010", "-Action", "flash"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 DRUM010: 对照单路10/20/40ms周期（电机拔下）",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "对照DRUM010红外周期", "--why", "同一摆位记录不同周期的回波率和最长通光时间", "run", "--", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Profile", "DRUM010", "-Action", "period-check", "-Seconds", "12"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 DRUM009: 构建单路红外诊断",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "构建DRUM009", "--why", "生成带单路红外窗口记录的诊断固件", "run", "--", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Profile", "DRUM009", "-Action", "build"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 DRUM009: 下载单路诊断（电机拔下）",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "下载DRUM009", "--why", "写入红外诊断版并保留硬件选项", "run", "--", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Profile", "DRUM009", "-Action", "flash"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
+      "label": "猫砂盆 DRUM009: 读取单路回波窗口（电机拔下）",
+      "type": "process", "command": "shnote",
+      "args": ["--what", "读取DRUM009红外", "--why", "对照三路并记录单路窗口高电平和边沿", "run", "--", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Profile", "DRUM009", "-Action", "optical-check", "-Seconds", "15"],
+      "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []
+    },
+    {
       "label": "猫砂盆 DRUM008: 构建暂停继续修复版",
       "type": "process", "command": "shnote",
       "args": ["--what", "构建DRUM008", "--why", "生成暂停保留进度的HEX", "run", "--", "powershell", "-NoProfile", "-File", "${workspaceFolder}/tools/app001.ps1", "-Profile", "DRUM008", "-Action", "build"],

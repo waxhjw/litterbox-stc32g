@@ -1,0 +1,26 @@
+{
+  "bytes": 18948,
+  "start": "0xff0000",
+  "end": "0xff4acb",
+  "sha256": "9a1757f33129803e38cafcf8311d5e9e0f09db2b739635a5e8b4a31606660b06",
+  "version": "LB_DRUM012",
+  "kind": "diagnostic",
+  "model": "STC32G8K64",
+  "source_sha256": "48faa4e5d651e27636c1a05c7f26d901dd6d73067afc3350fa62619b625b8010",
+  "tool_sha256": "d4953d3e3c4282b8e03b31961cf0b5767f5e37c682f1509c9522e99197da83c3",
+  "compiler_cache_sha256": "34db3ff3888bc08bfdf417e47d8703d49564658e4bb2c5bf15c6a9b4af332521",
+  "extra_sources": {
+    "drum_bench.h": "4fe155aad56d2eb2f72e2791ce92c55e81b0d1eaf4c753ea497c316489a5afc6",
+    "drum_board.h": "859b72d7a8f171e4e1503fa26f2786fc863dbdec82a21aac819b59ee4eac3004",
+    "drum_cycle.h": "91cb0643aa0800b37011388640d81da725bc5c358e7558edf1301a9a3cf54e9e",
+    "ir_beam_state.h": "ab913e178f258fd3ae3f5327262ee3f7a8a645247cfde1a1208c1ae537a0d857",
+    "ir_carrier_state.h": "bb42194bb4709cda8e32a6c05b1ad8d65f4fcd1c2ef63a3629fc26ebe9efa974",
+    "motor_control.h": "3020ec37aa36ebf550c54502e9c7e86023a59009b9f85ea9793c498a536c4614",
+    "single_ir.h": "d42c69b184d4ca0145f756d252c81bfcbe029795f616c27173f1f002322d7d42",
+    "tuya_link.h": "74ccbac82cc9d78700f2d390baaa9ee6eff7f9b8a4f40ff2106bc44ec1a4ef68",
+    "wifi_uart.h": "1f7d7deb8a2fee894d0042171ff0e33bc25b46e3854644ccf97234aab979f3d7"
+  },
+  "trim_khz": 11059.2,
+  "hardware_tested": false,
+  "purpose": "Unloaded two-round motor exercise; physical drum position remains unknown"
+}

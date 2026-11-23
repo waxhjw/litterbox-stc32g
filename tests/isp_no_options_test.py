@@ -121,8 +121,23 @@ class NoOptionsTest(unittest.TestCase):
     def test_drum008_pause_resume_image(self):
         self.replay_image('DRUM008', 264)
 
+    def test_drum009_single_trace_image(self):
+        self.replay_image('DRUM009', 272)
+
+    def test_drum010_single_period_image(self):
+        self.replay_image('DRUM010', 280)
+
+    def test_drum011_adc_window_image(self):
+        self.replay_image('DRUM011', 280)
+
+    def test_drum012_phase_scan_image(self):
+        self.replay_image('DRUM012', 304)
+
+    def test_drum013_single_window_stop_image(self):
+        self.replay_image('DRUM013', 304)
+
     def test_app_only_initialization_writes_timer0_reload(self):
-        for profile in ('APP002', 'APP003', 'APP004', 'APP005', 'DRUM001', 'DRUM002', 'DRUM003', 'DRUM004', 'DRUM005', 'DRUM006', 'DRUM007', 'DRUM008'):
+        for profile in ('APP002', 'APP003', 'APP004', 'APP005', 'DRUM001', 'DRUM002', 'DRUM003', 'DRUM004', 'DRUM005', 'DRUM006', 'DRUM007', 'DRUM008', 'DRUM009', 'DRUM010', 'DRUM011', 'DRUM012', 'DRUM013'):
             with self.subTest(profile=profile):
                 listing = (ROOT/'output'/('LB_'+profile)/'listing.asm').read_text(encoding='utf-8')
                 # CLR/SETB 0x8C 使用位寻址，指的是 TCON.TR0。

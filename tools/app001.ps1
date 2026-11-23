@@ -1,6 +1,6 @@
 param(
-    [ValidateSet('build','check','flash','status','watch','radar-high','stop','arm-watch','optical-check')][string]$Action='status',
-    [ValidateSet('APP001','APP002','APP003','APP004','APP005','DRUM001','DRUM002','DRUM003','DRUM004','DRUM005','DRUM006','DRUM007','DRUM008')][string]$Profile='APP001',
+    [ValidateSet('build','check','flash','status','watch','radar-high','stop','arm-watch','optical-check','period-check','phase-check')][string]$Action='status',
+    [ValidateSet('APP001','APP002','APP003','APP004','APP005','DRUM001','DRUM002','DRUM003','DRUM004','DRUM005','DRUM006','DRUM007','DRUM008','DRUM009','DRUM010','DRUM011','DRUM012','DRUM013')][string]$Profile='APP001',
     [ValidateRange(1,300)][int]$Seconds=60
 )
 $ErrorActionPreference='Stop'

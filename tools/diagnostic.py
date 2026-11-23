@@ -14,7 +14,7 @@ MANIFEST = OUTPUT/'manifest.json'
 EXTRA_SOURCES = []
 TRIM_KHZ = None
 WAIT_SECONDS = 60
-DRUM_PROFILES = ('DRUM001', 'DRUM002', 'DRUM003', 'DRUM004', 'DRUM005', 'DRUM006', 'DRUM007', 'DRUM008')
+DRUM_PROFILES = ('DRUM001', 'DRUM002', 'DRUM003', 'DRUM004', 'DRUM005', 'DRUM006', 'DRUM007', 'DRUM008', 'DRUM009', 'DRUM010', 'DRUM011', 'DRUM012', 'DRUM013')
 APP_PROFILES = ('APP001', 'APP002', 'APP003', 'APP004', 'APP005') + DRUM_PROFILES
 APP_VERSIONS = tuple('LB_'+profile for profile in APP_PROFILES)
 
@@ -183,7 +183,7 @@ def build_app001(cfg):
               extra_sources={header.name:digest(header) for header in EXTRA_SOURCES},
               trim_khz=TRIM_KHZ, hardware_tested=False,
               purpose=('Unloaded two-round motor exercise; physical drum position remains unknown'
-                       if VERSION in ('LB_DRUM004', 'LB_DRUM005', 'LB_DRUM006', 'LB_DRUM007', 'LB_DRUM008') else
+                       if VERSION in ('LB_DRUM004', 'LB_DRUM005', 'LB_DRUM006', 'LB_DRUM007', 'LB_DRUM008', 'LB_DRUM009', 'LB_DRUM010', 'LB_DRUM011', 'LB_DRUM012', 'LB_DRUM013') else
                        'APP004-based drum cycle, bench only before commissioning'
                        if VERSION[3:] in DRUM_PROFILES else
                        'IR017 + WIFI002 manual-clean request through the shared motor interlock')))

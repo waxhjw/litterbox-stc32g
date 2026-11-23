@@ -17,6 +17,12 @@ LOCAL = re.compile(rb"IRC [SR] K=[01]{3} R=[0-9A-F]{4} Q=[01] C=[0-9A-F] B=[0-7]
 HALL = re.compile(rb"H[0-3]")
 GUARDS = re.compile(rb"IRX R=[01] A=[0-8] S=[0-2] T=[0-9A-F]{4}")
 BEAMS = re.compile(rb"IRC P=(?:[0-9A-F]{4},){2}[0-9A-F]{4} M=[0-4]{3} B=[0-7]")
+SINGLE_FRAME = re.compile(
+    rb"IRS W=[0-9A-F]{4} V=[0-9A-F]{4} Q=[01] N=[0-9A-F]{4} H=[0-9A-F]{4} E=[0-9A-F]{4} F=[0-9A-F]{4} L=[01](?: C=[0-9A-F]{4})?"
+)
+OPTICAL_MODES = ((b"j", "array"), (b"c", "combined"))
+PERIOD_MODES = ((b"c", "10ms-before"), (b"u", "20ms"), (b"v", "40ms"), (b"c", "10ms-after"))
+PHASE_FRAME = re.compile(rb"IRP S=[0-4](?: [0-9A-F]{12}){9}")
 
 
 def query(link, command, pattern):
@@ -39,13 +45,13 @@ def arm_trial(link, app_pattern):
     print("ARMED: waiting for one new App start", flush=True)
 
 
-def optical_check(link, app_pattern, path, report, seconds):
-    """电机已拔下时保持摆位，依次比较仅三路与双组发射。"""
+def optical_check(link, app_pattern, path, report, seconds, single_trace=False, modes=OPTICAL_MODES):
+    """电机已拔下时固定摆位，依次对照指定的发射模式。"""
     initial = query(link, b"w", app_pattern)
     if not all(field in initial for field in (" O=0 ", " J=0 ", " M=0 ")):
         raise RuntimeError(f"主板未待机：{initial}")
     try:
-        for command, mode in ((b"j", "array"), (b"c", "combined")):
+        for command, mode in modes:
             query(link, b"k", LOCAL)
             response = query(link, command, LOCAL)
             if " C=1 " not in response:
@@ -58,8 +64,11 @@ def optical_check(link, app_pattern, path, report, seconds):
                 app = query(link, b"w", app_pattern)
                 if " O=0 " not in app or " M=0 " not in app:
                     raise RuntimeError(f"采样期间出现了运行状态：{app}")
-                print(mode, guards, peaks, flush=True)
-                report["samples"].append(dict(mode=mode, guards=guards, peaks=peaks))
+                sample = dict(mode=mode, elapsed=round(time.monotonic()-started, 3), guards=guards, peaks=peaks)
+                if single_trace and mode != "array":
+                    sample["single"] = query(link, b"z", SINGLE_FRAME)
+                print(mode, guards, peaks, sample.get("single", ""), flush=True)
+                report["samples"].append(sample)
                 save_json(path, report)
                 time.sleep(0.25)
     finally:
@@ -69,18 +78,82 @@ def optical_check(link, app_pattern, path, report, seconds):
             raise RuntimeError(f"未确认关闭发射：{stopped}")
 
 
+def phase_check(link, app_pattern, path, report):
+    """每次采三路在三个相位的分布，固件同时负责关闭发射。"""
+    initial = query(link, b"w", app_pattern)
+    if not all(field in initial for field in (" O=0 ", " J=0 ", " M=0 ")):
+        raise RuntimeError(f"主板未待机：{initial}")
+    report["initial"] = initial
+    totals = [
+        dict(gate_ticks=gate, channel=channel, count=0, light=0, low=None, high=None)
+        for gate in (60, 42, 24) for channel in (1, 2, 3)
+    ]
+    report["totals"] = totals
+    try:
+        # 精确到一拍的采样可能错过窗口。每次有固件超时，跨多轮累积各组数据。
+        for run in range(1, 19):
+            query(link, b"k", LOCAL)
+            response = query(link, b"e", LOCAL)
+            if " C=1 " not in response or not response.startswith("IRC S "):
+                raise RuntimeError(f"定相位采样未启动：{response}")
+            time.sleep(1.70)
+            deadline = time.monotonic() + 1.1
+            while True:
+                raw = query(link, b"y", PHASE_FRAME)
+                _, state_field, *values = raw.split()
+                if state_field != "S=1" or time.monotonic() >= deadline:
+                    break
+                time.sleep(0.18)
+            cells = []
+            for i, value in enumerate(values):
+                count, light, low, high = (int(value[a:b], 16) for a, b in ((0, 2), (2, 4), (4, 8), (8, 12)))
+                if not 0 <= light <= count <= 16 or (count and not 0 <= low <= high <= 4095):
+                    raise RuntimeError(f"采样回包数值越界：{raw}")
+                cells.append(dict(gate_ticks=(60, 42, 24)[i//3], channel=i%3+1,
+                                  count=count, light=light, low=low if count else None,
+                                  high=high if count else None))
+                total = totals[i]
+                if count:
+                    total["low"] = min(total["low"], low) if total["count"] else low
+                    total["high"] = max(total["high"], high) if total["count"] else high
+                    total["count"] += count
+                    total["light"] += light
+            report["samples"].append(dict(run=run, state=state_field, raw=raw, cells=cells))
+            save_json(path, report)
+            print(f"SCAN {run} {raw}", flush=True)
+            if state_field not in ("S=2", "S=3") or (state_field == "S=2" and any(c["count"] != 16 for c in cells)):
+                raise RuntimeError("固件采样状态不符，已记录收到的样本")
+            automatic = query(link, b"?", LOCAL)
+            if " C=0 " not in automatic or " Q=0 " not in automatic or not automatic.startswith("IRC S "):
+                raise RuntimeError(f"采样结束后发射未自动关闭：{automatic}")
+            if run>=3 and all(c["count"]>=16 for c in totals):
+                return
+        raise RuntimeError("已达采样轮数上限，保存了已收到的样本")
+    finally:
+        stopped = query(link, b"k", LOCAL)
+        report["stop"] = stopped
+        save_json(path, report)
+        print("OPTICAL OFF:", stopped, flush=True)
+        if " C=0 " not in stopped or not stopped.startswith("IRC S "):
+            raise RuntimeError(f"未确认关闭发射及输出：{stopped}")
+
+
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("action", choices=("status", "watch", "radar-high", "stop", "arm-watch", "optical-check"))
+    parser.add_argument("action", choices=("status", "watch", "radar-high", "stop", "arm-watch", "optical-check", "period-check", "phase-check"))
     parser.add_argument("--profile", choices=APP_PROFILES, default="APP001")
     parser.add_argument("--seconds", type=int, choices=range(1, 301), default=60, metavar="1..300")
     args = parser.parse_args()
-    combined_guards = args.profile in ("DRUM005", "DRUM006", "DRUM007", "DRUM008")
+    combined_guards = args.profile in DRUM_PROFILES[DRUM_PROFILES.index("DRUM005"):]
     bench_profile = args.profile == "DRUM004" or combined_guards
     if args.action == "arm-watch" and not bench_profile:
         parser.error("arm-watch only supports the unloaded bench profiles")
-    if args.action == "optical-check" and args.profile not in ("DRUM007", "DRUM008"):
-        parser.error("optical-check requires DRUM007 or DRUM008")
+    if args.action == "optical-check" and args.profile not in DRUM_PROFILES[DRUM_PROFILES.index("DRUM007"):]:
+        parser.error("optical-check requires DRUM007 or later")
+    if args.action == "period-check" and args.profile not in DRUM_PROFILES[DRUM_PROFILES.index("DRUM010"):]:
+        parser.error("period-check requires DRUM010 or later")
+    if args.action == "phase-check" and args.profile not in DRUM_PROFILES[DRUM_PROFILES.index("DRUM012"):]:
+        parser.error("phase-check requires DRUM012 or later")
     config = load_json(CONFIG)
     port = ports(config)
     suffix = rb" S=[023]" if args.profile in ("APP003", "APP004", "APP005") + DRUM_PROFILES else b""
@@ -103,8 +176,13 @@ def main():
     with link:
         started = time.monotonic()
         print("REPORT:", path, flush=True)
-        if args.action == "optical-check":
-            optical_check(link, app_pattern, path, report, args.seconds)
+        if args.action == "phase-check":
+            phase_check(link, app_pattern, path, report)
+            return
+        if args.action in ("optical-check", "period-check"):
+            modes = PERIOD_MODES if args.action == "period-check" else OPTICAL_MODES
+            optical_check(link, app_pattern, path, report, args.seconds,
+                          single_trace=args.profile in DRUM_PROFILES[DRUM_PROFILES.index("DRUM009"):], modes=modes)
             return
         command = {"radar-high": b"H", "stop": b"!"}.get(args.action, b"?")
         if args.action == "radar-high":

@@ -1,12 +1,35 @@
 # 猫砂盆 WiFi 主板 · STC32G8K64
 
-当前版本为 **DRUM008**，更新于 2026-11-21。已上板验证 App 开始、暂停和继续同一轮任务。红外判定仍有波动，连续通光后的电机输出与整机动作待测。
+当前公开版本 **DRUM013**，2026-11-23。工程包含 STC32G8K64 固件、WBR3 涂鸦面板、CH340 下载工具和主板资料。固件用于台架联调，板级配置仍锁定未标定的实体滚筒。
 
-- 在 VSCode 打开本目录或 `litterbox-stc32g.code-workspace`，搜索 **DRUM008** 使用构建、下载、红外对照和 App 监听任务。
-- 当前源码在 [src/DRUM008](src/DRUM008/)，镜像与校验信息在 [output/LB_DRUM008](output/LB_DRUM008/)，实板验收和下一步见 [联调记录](docs/SESSION_HANDOFF.md)。
-- 新环境使用项目的 `tools/bootstrap.py` 准备串口依赖。STC IDE 的构建缓存由 `tools/stcide_setup.py` 准备。需要阅读原手册时，从厂商下载到 `docs/reference/stc32g-cn.pdf`，来源见 [STC32G 技术手册](https://stcmicro.com/datasheet/stc32g-cn.pdf)。
+| 项目 | 文件 |
+| --- | --- |
+| 当前固件源码 | [src/DRUM013](src/DRUM013/) |
+| 可下载镜像与 SHA-256 | [LB_DRUM013.hex](output/LB_DRUM013/LB_DRUM013.hex) · [构建清单](output/LB_DRUM013/manifest.json) |
+| 上一版镜像 | [DRUM012](output/LB_DRUM012/LB_DRUM012.hex) |
+| 主板硬件资料 | [原理图](<docs/reference/2-猫砂盆控制原理图.pdf>) · [BOM](<docs/reference/更新-WIFI款主板-红外猫砂盆-BOM表261017.xls>) · [贴片图](<docs/reference/贴片图-LQ-WiFi_红外20260921更新贴片图.pdf>) |
+| 手机面板源码 | [tuya-panel](tuya-panel/) |
+| 联调记录 | [SESSION_HANDOFF.md](docs/SESSION_HANDOFF.md) |
 
-## 早期环境搭建与独立诊断记录
+### 构建与下载
+
+在 Windows 安装 Python 和 Node.js。新环境可直接运行以下命令准备依赖和 STC IDE 缓存。构建清单记录了本次所用的编译器缓存校验值。已安装 `shnote` 的环境也可以用 VSCode 打开本目录，在「运行任务」中搜索 `DRUM013`。
+
+```powershell
+python tools/bootstrap.py
+python tools/stcide_setup.py
+powershell -NoProfile -File tools/app001.ps1 -Profile DRUM013 -Action build
+```
+
+下载会擦写目标程序。台架下载时拔下电机，USB 端使用 CH340，主板 12V 先关。运行同一脚本的 `-Action flash`，等终端提示等待目标冷启动后，再打开主板 12V。用 `-Action status` 读取版本和待机状态。
+
+### 验证状态
+
+三路红外任一路在完整窗口内失去有效回波，驱动立即关闭。雷达、三路红外和单路红外连续约 5 秒无触发后，允许恢复原方向和进度。
+
+DRUM013 完成编译、软件保护回放及 34 项离线检查。实板通过串口下载与启动核对。现有台架的无遮挡光路仍有间歇丢波，实板停机恢复及整机动作尚未验收。
+
+## 2026-11-09 至 2026-11-11 环境搭建与独立诊断记录
 
 IR006 临时三路采样诊断的接线、范围及历史结果见 [IR006 采样说明](docs/IR006.md)。
 
